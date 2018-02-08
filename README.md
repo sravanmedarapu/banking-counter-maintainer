@@ -1,10 +1,11 @@
-# banking-counter-maintainer
-Banking token based counter management POC
+# banking-counterDetails-maintainer
+Banking token based counterDetails management POC
 
 
 #Problem​ ​Statement
+
 A bank, ABC Bank, has many branches and customers. Each branch has a limited number of
-teller counters. ABC Bank would like to improve their customer experience at each branch.
+teller counterDetails. ABC Bank would like to improve their customer experience at each branch.
 Managing long queues of customers at the bank during business hours is one of the most
 challenging tasks. ABC Bank also provides a better customer experience to their premium
 customers by providing priority over non premium customers (less waiting time at branches).
@@ -36,19 +37,19 @@ To achieve this, please develop a tokening system which can be configured to do 
         
         ○ Set the priority on the token based on the customer type while issuing tokens
         
-        ○ If a customer is a valued customer, send them to a counter which serves priority
+        ○ If a customer is a valued customer, send them to a counterDetails which serves priority
         customers by setting the token to high priority
         
         
-    ● Expose a service that displays a list of service counters and token numbers under each
-    service counter, which customers can use to to check the counter assigned to their
+    ● Expose a service that displays a list of service counterDetails and token numbers under each
+    service counterDetails, which customers can use to to check the counterDetails assigned to their
     token.
     
     ● Create services to serve customers using their tokens.
     
     
-    ● Multi-counter services: Some services may require a customer to traverse multiple
-    counters to complete the process. This system should support such functions. If a
+    ● Multi-counterDetails services: Some services may require a customer to traverse multiple
+    counterDetails to complete the process. This system should support such functions. If a
     service is so configured, after customers are served at one service desk, they will
     automatically be queued up at the next service desk for that service. This feature can be
     used in addition to or in place of Multi-service selection by the customer.

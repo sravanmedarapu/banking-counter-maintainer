@@ -1,6 +1,6 @@
 package com.counter.maintainer.data.contracts;
 
-public enum TypeOfService {
+public enum ServicePriority {
 	REGULAR,
 	PREMIUM
 }

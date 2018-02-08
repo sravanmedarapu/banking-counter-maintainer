@@ -6,9 +6,6 @@ import javax.persistence.*;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.repository.NoRepositoryBean;
 
-//@EntityScan
-//@NoRepositoryBean
-
 @Entity
 @Table(name = "customer")
 public class Customer implements Serializable{
@@ -30,9 +27,9 @@ public class Customer implements Serializable{
     @JoinColumn(name = "id", nullable=false)
 	private Address address;
 	
-    @Column(name="typeOfService")
+    @Column(name="servicePriority")
     @Enumerated(EnumType.ORDINAL)
-	private TypeOfService typeOfService;
+	private ServicePriority servicePriority;
 	
 	
 	public long getCustomerId() {
@@ -59,11 +56,11 @@ public class Customer implements Serializable{
 	public void setAddress(Address address) {
 		this.address = address;
 	}
-	public TypeOfService getTypeOfService() {
-		return typeOfService;
+	public ServicePriority getTypeOfService() {
+		return servicePriority;
 	}
-	public void setTypeOfService(TypeOfService typeOfService) {
-		this.typeOfService = typeOfService;
+	public void setTypeOfService(ServicePriority servicePriority) {
+		this.servicePriority = servicePriority;
 	}
 	
 	

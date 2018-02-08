@@ -16,14 +16,14 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement
 @EnableJpaRepositories("com.counter.maintainer.repository")
 @EntityScan("com.counter.maintainer.data.contracts")
-public class TellerMaintenanceApp extends SpringBootServletInitializer {
+public class TokenMaintenanceApp extends SpringBootServletInitializer {
 	
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-		return application.sources(TellerMaintenanceApp.class);
+		return application.sources(TokenMaintenanceApp.class);
 	}
 	
 	public static void main(String[] args) {
-		SpringApplication.run(TellerMaintenanceApp.class, args);
+		SpringApplication.run(TokenMaintenanceApp.class, args);
 	}
 }

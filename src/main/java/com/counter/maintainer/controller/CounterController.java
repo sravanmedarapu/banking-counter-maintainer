@@ -16,19 +16,19 @@ public class CounterController {
 	@Autowired
 	private CustomerService customerService;
 
+	@RequestMapping("/counter/status")
+	public List<Long> getCounterStatus() {
+		//TODO: yet to implement
+		return null;
+
+	}
+
 	@RequestMapping(method=RequestMethod.GET, value="/counter/status")
 	public String getStatus() {
 		//TODO: yet to implement
 		return null;
 	}
-	
-	@RequestMapping("/counter/status")
-	public List<Long> getCounterStatus() {
-		//TODO: yet to implement
-		return null;
-		
-	}
-	
+
 	public void createCustomer(Customer customer) {
 		customerService.createCustomer(customer);
 		

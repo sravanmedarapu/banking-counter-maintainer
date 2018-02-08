@@ -2,21 +2,15 @@ package com.counter.maintainer.data.contracts;
 
 import java.util.List;
 
-public class Counter {
+public class CounterDetails {
+
 	private long counterId;
+
 	private List<ServiceType> serviceTypes;
-	private CounterStatus counterStatus;
-	private List<Token> tokens;
-	
-	public List<Token> getTokens() {
-		return tokens;
-	}
 
+	private List<Long> tokenIdList;
 
-	public void setTokens(List<Token> tokens) {
-		this.tokens = tokens;
-	}
-
+	private Boolean isActive;
 
 	public long getCounterId() {
 		return counterId;
@@ -37,18 +31,21 @@ public class Counter {
 		this.serviceTypes = serviceTypes;
 	}
 
-
-	public void setCounterStatus(CounterStatus counterStatus) {
-		this.counterStatus = counterStatus;
+	public Boolean getActive() {
+		return isActive;
 	}
 
-
-	public CounterStatus getCounterStatus() {
-		//TODO: yet to implement
-		return null;
-		
+	public void setActive(Boolean active) {
+		isActive = active;
 	}
-	
+
+	public List<Long> getTokenIdList() {
+		return tokenIdList;
+	}
+
+	public void setTokenIdList(List<Long> tokenIdList) {
+		this.tokenIdList = tokenIdList;
+	}
 }
 
 class CounterStatus {

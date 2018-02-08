@@ -15,16 +15,11 @@ public class CustomerService {
 	
 	@Autowired
 	CustomerRepository customerRepository;
-	public CustomerService() {
-		//this.customerRepository = customerRepository;
-	}
-	
+
 	@Transactional
 	public Customer createCustomer(Customer customer) {
 		Customer customerCreated = customerRepository.save(customer);
 		return customerCreated;
-		
-		
 	}
 
 }

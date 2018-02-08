@@ -2,16 +2,14 @@ package com.counter.maintainer.data.contracts;
 
 public enum ServiceType {
 	
-	WITHDRAWL(5), DEPOSIT(5), CHECKDEPISIT(10), ACCOUNT_CLOSE(5);
+	WITHDRAW(5), DEPOSIT(5), CHECK_DEPOSIT(10), ACCOUNT_CLOSE(5);
 	
+	int avgTimeInMin;
 	
-	int timeInMin;
-	
-	ServiceType(int timeInMin) {
-		this.timeInMin = timeInMin;
+	ServiceType(int avgTimeInMin) {
+		this.avgTimeInMin = avgTimeInMin;
 	}
-	
-	
+
 	
 
 }
