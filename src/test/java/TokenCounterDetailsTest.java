@@ -1,13 +1,8 @@
-import com.counter.maintainer.config.TokenMaintenanceApp;
 import com.counter.maintainer.data.contracts.*;
 import com.counter.maintainer.repository.CounterRepository;
-import com.counter.maintainer.service.TokenService;
+import com.counter.maintainer.service.TokenServiceImpl;
 import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 
@@ -22,7 +17,7 @@ public class TokenCounterDetailsTest
     private CounterRepository counterRepository;
 
     @Autowired
-    private TokenService tokenService;
+    private TokenServiceImpl tokenService;
 
     //@Test
     public void findAllUsers() {

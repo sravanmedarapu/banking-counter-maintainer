@@ -5,7 +5,6 @@ import com.counter.maintainer.repository.CounterRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,7 +17,7 @@ public class CounterServiceImpl implements CounterService {
     @Autowired
     private CounterManager counterManager;
     @Autowired
-    private TokenManager tokenManager;
+    private TokenServiceImpl tokenService;
 
     private static final Logger logger = LoggerFactory.getLogger(CounterServiceImpl.class);
 
@@ -75,9 +74,9 @@ public class CounterServiceImpl implements CounterService {
 
 
         if(tokenStatus == TokenStatus.COMPLETED || tokenStatus == TokenStatus.CANCELLED) {
-            tokenManager.updateTokenStatus(tokenId, tokenStatus, false);
+            tokenService.updateTokenStatus(tokenId, tokenStatus, false);
         } else {
-            tokenManager.updateTokenStatus(tokenId, tokenStatus, true);
+            tokenService.updateTokenStatus(tokenId, tokenStatus, true);
         }
 
         return true;

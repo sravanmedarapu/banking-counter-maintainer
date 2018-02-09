@@ -1,7 +1,6 @@
 package com.counter.maintainer.controller;
 
-import com.counter.maintainer.service.TokenManager;
-import com.counter.maintainer.service.TokenService;
+import com.counter.maintainer.service.TokenServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.counter.maintainer.data.contracts.Customer;
 import com.counter.maintainer.data.contracts.Token;
-import com.counter.maintainer.repository.CustomerRepository;
 import com.counter.maintainer.service.CustomerService;
 
 @RestController
@@ -21,18 +19,8 @@ public class TokenController {
 	CustomerService customerService;
 
 	@Autowired
-	TokenService tokenService;
+	TokenServiceImpl tokenService;
 
-	@Autowired
-	TokenManager tokenManager;
-	
-
-	@RequestMapping(method=RequestMethod.POST, value="/token/employee/{employeeId}/update")
-	public boolean updateTokenStatus(@RequestBody Token token, @PathVariable long employeeId) {
-		//TODO: yet to implement
-		return false;
-	}
-	
 
 	/**
 	 * check if the customer is existing or new

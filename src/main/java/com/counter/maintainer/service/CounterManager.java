@@ -9,5 +9,4 @@ public interface CounterManager {
     Token assignTokenToCounter(Token token);
 
     List<CounterDetails> getCounterStatus();
-
 }

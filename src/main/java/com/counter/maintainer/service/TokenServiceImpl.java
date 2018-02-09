@@ -14,7 +14,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 @Component
-public class TokenService {
+public class TokenServiceImpl {
 
     @Autowired
     private TokenRepository tokenRepository;

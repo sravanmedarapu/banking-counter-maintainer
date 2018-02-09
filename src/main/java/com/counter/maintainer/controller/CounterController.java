@@ -31,7 +31,6 @@ public class CounterController {
 
 	public void createCustomer(Customer customer) {
 		customerService.createCustomer(customer);
-		
 	}
 	
 	
