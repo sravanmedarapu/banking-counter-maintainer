@@ -30,7 +30,7 @@ public class TokenService {
 
     @Transactional
     public Token createToken(Token token) {
-        if(token.getCustomerId() == null) {
+        if (token.getCustomerId() == null) {
             Customer customer = customerService.createCustomer(token.getCustomer());
             token.setCustomer(customer);
             token.setCustomerId(customer.getCustomerId());
@@ -41,12 +41,12 @@ public class TokenService {
     }
 
     public void updateTokenStatus(Long tokenId, TokenStatus status, Boolean inQ) {
-         tokenRepository.updateTokenStatus(tokenId, status, inQ);
+        tokenRepository.updateTokenStatus(tokenId, status, inQ);
     }
 
     public Token getToken(Long tokenId) {
-        if(tokenId<=0) {
-            throw new RuntimeException("Invalid tokenId:"+ tokenId);
+        if (tokenId <= 0) {
+            throw new RuntimeException("Invalid tokenId:" + tokenId);
         }
         return tokenRepository.getToken(tokenId);
     }
