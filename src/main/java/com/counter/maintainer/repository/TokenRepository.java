@@ -24,6 +24,7 @@ public class TokenRepository {
 
 
     public Token createToken(Token token) {
+        String createQuery = "insert into token set(customerId, serviceID) values ";
         return null;
 
     }
@@ -36,13 +37,13 @@ public class TokenRepository {
 
     @Transactional(readOnly=true)
     public Token getToken(long tokenId) {
-        String query = "select t.tokenId, t.customerId, t.inQ, t.comments, t.actionItems, t.status, c.counterId, st.name "
-                         + "from token as t "
-                         + "inner join counterStatus as c on t.tokenId=c.tokenId"
-                         + "inner join serviceTypes as st on token.serviceID=c.serviceID "
-                         + "where t.tokenID=?";
+        String query = "select t.tokenId, t.customerId, t.inQ, t.comments, t.actionItems, "
+                           + "t.status, c.counterId, st.name from token as t  "
+                           + "inner join counterStatus as c on t.tokenId=c.tokenId "
+                           + "inner join serviceTypes as st on t.serviceID=st.serviceID "
+                           + "where t.tokenId =?";
 
-        return jdbcTemplate.queryForObject(query, new Object[]{tokenId}, new TokenRowMapper());
+        return jdbcTemplate.queryForObject("select  * from token", new Object[]{tokenId}, new TokenRowMapper());
     }
 
 

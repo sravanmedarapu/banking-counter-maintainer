@@ -12,16 +12,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
-
+/*
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = TokenMaintenanceApp.class)
+@SpringBootTest(classes = TokenMaintenanceApp.class)*/
 public class CounterManagerTest {
 
     @Autowired
     private CounterManager counterManager;
     @Autowired
     private CounterService counterService;
-    @Test
+    //@Test
     public void counterTest() {
         Token token = TokenCounterDetailsTest.getFakeToken(ServicePriority.PREMIUM, ServiceType.WITHDRAW);
         counterManager.assignTokenToCounter(token);

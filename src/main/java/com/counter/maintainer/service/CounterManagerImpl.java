@@ -33,7 +33,7 @@ public class CounterManagerImpl implements CounterManager {
     private EmployeeRepository employeeRepository;
 
 
-    @EventListener(ApplicationReadyEvent.class)
+    //h@EventListener(ApplicationReadyEvent.class)
     public void initCounters() {
         List<CounterDetails> counterDetailsList = counterRepository.getAvailableCounters();
         List<Employee> employeeList= employeeRepository.getEmployees();

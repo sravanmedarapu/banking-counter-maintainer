@@ -10,11 +10,11 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = TokenMaintenanceApp.class)
+/*@RunWith(SpringRunner.class)
+@SpringBootTest(classes = TokenMaintenanceApp.class)*/
 public class CounterDetailsQueueTest {
 
-    @Test(expected = RuntimeException.class)
+    //@Test(expected = RuntimeException.class)
     public void counterQueueAddTest() {
         CounterQueue premimumQeue = new CounterQueue(CounterType.PREMIUM);
         CounterQueue regularQeue = new CounterQueue(CounterType.PREMIUM);
@@ -32,7 +32,7 @@ public class CounterDetailsQueueTest {
         premimumQeue.addTokenToQueue(TokenCounterDetailsTest.getFakeToken(ServicePriority.REGULAR));
     }
 
-    @Test
+    //@Test
     public void counterQueueOrderTest() throws EmptyCounterQueueException {
         CounterQueue bothQeue = new CounterQueue(CounterType.BOTH);
 
