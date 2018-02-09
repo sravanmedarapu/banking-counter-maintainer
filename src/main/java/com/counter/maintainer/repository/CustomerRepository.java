@@ -1,15 +1,27 @@
 package com.counter.maintainer.repository;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
+import com.counter.maintainer.data.contracts.Address;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import com.counter.maintainer.data.contracts.Customer;
 
 @Repository
-public interface CustomerRepository extends JpaRepository<Customer, Long>{
+public class CustomerRepository /*extends JpaRepository<Customer, Long>*/{
+
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
 	/*
 	@Query("select c.customerId as customerId, c.name as name, c.phoneNumber as phoneNumber, c.typeOfService as typeOfService,"
 			+ " add.streeName as streeName, add.city as city, add.state as state, add.zipCode as zipCode, add.country as country"
@@ -20,11 +32,38 @@ public interface CustomerRepository extends JpaRepository<Customer, Long>{
 			
 	//Customer findCustomerById(Long customerId);
 	
-	Customer save(Customer customer);
+	public Customer save(Customer customer) {
+		KeyHolder idHolder = new GeneratedKeyHolder();
+		jdbcTemplate.update(new PreparedStatementCreator() {
+			@Override
+			public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+
+				PreparedStatement ps = connection.prepareStatement("insert into customer  (name, phoneNumber) values (?1, ?2)",
+																   new String[]{"id"});
+
+				ps.setString(1, customer.getName());
+				ps.setString(2, customer.getPhoneNumber());
+				return ps;
+			}
+		}, idHolder);
+
+		customer.setCustomerId(idHolder.getKey().intValue());
+		Address address = customer.getAddress();
+		if(address != null) {
+
+			jdbcTemplate.update("insert into address set customerId=?1, city=?2, state=?3, country=?4, zipcode=?5",
+								customer.getCustomerId(), address.getCity(), address.getState(), address.getCountry(), address.getZipCode());
+		}
+		return customer;
+	}
 	
-	List<Customer> findAll();
+	public List<Customer> findAll() {
+		return null;
+	}
 	
-	Customer findOne(Long customerId);
+	public Customer findOne(Long customerId) {
+		return null;
+	}
 	
 
 }

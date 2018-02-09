@@ -71,7 +71,7 @@ public class CounterDesk extends Thread{
             throw new InvalidTokenException("Can't process " + token.getStatus().name() + "token");
         }
         Token servedToken = counterService.serveToken(token, empId);
-        counterQueue.addToRecentServedList(servedToken.getServicePriority());
+        counterQueue.addToRecentServedList(servedToken);
         return servedToken;
     }
 

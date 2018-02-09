@@ -6,47 +6,50 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.joda.time.DateTime;
 
 import javax.persistence.*;
-
+/*
 @Entity
-@Table(name = "token")
+@Table(name = "token")*/
 public class Token implements Comparable<Token> {
-	@Id
+	/*@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name="tokenId")
+	@Column(name="tokenId")*/
 	private Long tokenId;
 
-	@Column(name="servicePriority")
+	//@Column(name="servicePriority")
 	private ServicePriority servicePriority;
 
-	@Column(name="customerId")
+	//@Column(name="customerId")
 	private Long customerId;
 
-	@Transient
+	//@Transient
 	private Customer customer;
 
-	@Column(name="comments")
+	//@Column(name="comments")
 	private String comments;
 
-	@Column(name="actionItems")
+	//@Column(name="actionItems")
 	private String actionItems;
 
-	@Column(name="status")
+	//@Column(name="status")
 	private TokenStatus status;
 
-	@Column(name="createdDate")
+	//@Column(name="createdDate")
+	@JsonIgnore
 	private DateTime createdDate;
 
 	private Boolean inQ;
 
 
+	@JsonIgnore
 	private Long approxTime;
 
 	private Long counterId;
 
 	@Transient
+	@JsonIgnore
 	private DateTime counterAddedTime;
 
-	@Column(name="serviceType")
+	//@Column(name="serviceType")
 	private ServiceType serviceType;
 	
 	public Long getTokenId() {

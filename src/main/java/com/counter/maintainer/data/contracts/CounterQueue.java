@@ -52,9 +52,15 @@ public class CounterQueue {
         return token;
     }
 
-    public void addToRecentServedList(ServicePriority priority) {
+    public void addToRecentServedList(Token servedToken) {
+        if(regularQueue.contains(servedToken)) {
+            regularQueue.poll();
+        } else if(premiumQueue.contains(servedToken)) {
+            regularQueue.poll();
+        }
+
         if(counterQueueType.equals(CounterType.BOTH)) {
-            recentServedServiceList.add(priority);
+            recentServedServiceList.add(servedToken.getServicePriority());
         }
     }
 
@@ -66,9 +72,9 @@ public class CounterQueue {
 
         switch (counterQueueType) {
         case PREMIUM:
-            return premiumQueue.poll();
+            return premiumQueue.peek();
         case REGULAR:
-            return regularQueue.poll();
+            return regularQueue.peek();
         case BOTH:
             return fetchTokenFromBothCounter();
         default:
@@ -80,9 +86,9 @@ public class CounterQueue {
     private Token fetchTokenFromBothCounter() throws EmptyCounterQueueException {
         if((recentServedServiceList.isEmpty() || recentServedServiceList.contains(ServicePriority.REGULAR))
             && premiumQueue.size()>0) {
-            return premiumQueue.poll();
+            return premiumQueue.peek();
         } else if(regularQueue.size()>0) {
-            return regularQueue.poll();
+            return regularQueue.peek();
         } else {
             throw new EmptyCounterQueueException();
         }

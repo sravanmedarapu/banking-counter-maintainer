@@ -33,7 +33,7 @@ public class CounterManagerImpl implements CounterManager {
     private EmployeeRepository employeeRepository;
 
 
-    //h@EventListener(ApplicationReadyEvent.class)
+    @EventListener(ApplicationReadyEvent.class)
     public void initCounters() {
         List<CounterDetails> counterDetailsList = counterRepository.getAvailableCounters();
         List<Employee> employeeList= employeeRepository.getEmployees();
@@ -64,7 +64,7 @@ public class CounterManagerImpl implements CounterManager {
         if(counterDesks.isEmpty()) {
             throw new CountersNotAvailableException();
         }
-            Integer minQueueLength = Integer.MIN_VALUE;
+            Integer minQueueLength = Integer.MAX_VALUE;
             CounterDesk minCounterDesk = counterDesks.get(0);
             for(CounterDesk counterDesk : counterDesks) {
                 int curMinLegth = counterDesk.getMinQueueLength(token.getServicePriority());

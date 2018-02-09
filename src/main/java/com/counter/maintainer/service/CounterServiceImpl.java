@@ -38,7 +38,7 @@ public class CounterServiceImpl implements CounterService {
             //process the request
             logger.info("Processing %s request, will be completed in 1 min",serviceType.name());
             try {
-                Thread.sleep(1000);
+                Thread.sleep(10000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -49,7 +49,7 @@ public class CounterServiceImpl implements CounterService {
             //process the request
             logger.info("Processing %s request, will be completed in 2 min",serviceType.name());
             try {
-                Thread.sleep(2000);
+                Thread.sleep(40000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

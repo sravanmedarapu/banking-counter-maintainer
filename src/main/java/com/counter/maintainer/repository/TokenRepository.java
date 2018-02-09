@@ -8,10 +8,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -24,8 +29,23 @@ public class TokenRepository {
 
 
     public Token createToken(Token token) {
-        String createQuery = "insert into token set(customerId, serviceID) values ";
-        return null;
+        String createQuery = "insert into token set customerId=?1, serviceID=(select serviceId from serviceTypes where name=?2)";
+        KeyHolder idHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(new PreparedStatementCreator() {
+            @Override
+            public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+
+                PreparedStatement ps = connection.prepareStatement(createQuery,
+                                                                   new String[]{"id"});
+
+                ps.setString(1, String.valueOf(token.getCustomerId()));
+                ps.setString(2, String.valueOf(token.getServiceType()));
+                return ps;
+            }
+        }, idHolder);
+
+        token.setTokenId(Long.valueOf(idHolder.getKey().intValue()));
+        return token;
 
     }
 
@@ -43,7 +63,7 @@ public class TokenRepository {
                            + "inner join serviceTypes as st on t.serviceID=st.serviceID "
                            + "where t.tokenId =?";
 
-        return jdbcTemplate.queryForObject("select  * from token", new Object[]{tokenId}, new TokenRowMapper());
+        return jdbcTemplate.queryForObject(query, new Object[]{tokenId}, new TokenRowMapper());
     }
 
 

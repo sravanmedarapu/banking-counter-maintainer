@@ -25,10 +25,10 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
 
-@Configuration
+/*@Configuration
 @ComponentScan
 @EnableTransactionManagement
-@PropertySource(value = { "classpath:application.properties" })
+@PropertySource(value = { "classpath:application.properties" })*/
 public class AppConfig
 {
     @Autowired
@@ -85,10 +85,10 @@ public class AppConfig
     }
 */
 
-    @Bean
+   /* @Bean
     public ServletRegistrationBean h2servletRegistration() {
         ServletRegistrationBean registration = new ServletRegistrationBean(new WebServlet());
-        registration.addUrlMappings("/console/*");
+        registration.addUrlMappings("/console*//*");
         return registration;
-    }
+    }*/
 }

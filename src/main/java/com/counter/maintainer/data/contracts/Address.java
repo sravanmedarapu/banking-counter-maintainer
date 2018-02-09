@@ -9,27 +9,26 @@ import javax.persistence.Table;
 
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
-@Entity
-@Table(name = "address")
+
 public class Address {
-	@Id
+	/*@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "id")
+	@Column(name = "id")*/
 	private String id;
 	
-	@Column(name = "streeName")
+	//@Column(name = "streeName")
 	private String streeName;
 	
-	@Column(name = "city")
+	//@Column(name = "city")
 	private String city;
 	
-	@Column(name = "state")
+	//@Column(name = "state")
 	private String state;
 	
-	@Column(name = "country")
+	//@Column(name = "country")
 	private String country;
 	
-	@Column(name = "zipCode")
+	//@Column(name = "zipCode")
 	private String zipCode;
 	
 	public String getStreeName() {
