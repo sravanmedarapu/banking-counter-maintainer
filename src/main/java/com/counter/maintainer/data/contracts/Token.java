@@ -36,6 +36,9 @@ public class Token implements Comparable<Token> {
 	@Column(name="createdDate")
 	private DateTime createdDate;
 
+	private Boolean inQ;
+
+
 	private Long approxTime;
 
 	private Long counterId;
@@ -112,6 +115,16 @@ public class Token implements Comparable<Token> {
 	public void setServiceType(ServiceType serviceType) {
 		this.serviceType = serviceType;
 	}
+
+
+	public Boolean getInQ() {
+		return inQ;
+	}
+
+	public void setInQ(Boolean inQ) {
+		this.inQ = inQ;
+	}
+
 	@Override
 	public String toString() {
 		return "Token [tokenId=" + tokenId + ", servicePriority=" + servicePriority + ", customerId=" + customerId

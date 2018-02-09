@@ -8,9 +8,9 @@ import com.counter.maintainer.data.contracts.TokenStatus;
 import java.util.List;
 
 public interface CounterService {
-    List<CounterDetails> findAvailableCounters(ServiceType serviceType);
+    List<CounterDetails> getAvailableCounters(ServiceType serviceType);
 
     Token serveToken(Token token, long empId);
 
-    Token updateTokenStatus(Long tokenId, TokenStatus tokenStatus, Long emplId);
+    Boolean updateTokenStatus(Long tokenId, TokenStatus tokenStatus, Long emplId);
 }

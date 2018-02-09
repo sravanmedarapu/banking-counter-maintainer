@@ -35,8 +35,19 @@ public class TokenService {
             token.setCustomer(customer);
             token.setCustomerId(customer.getCustomerId());
         }
-        Token createdToken = tokenRepository.save(token);
+        Token createdToken = tokenRepository.createToken(token);
 
         return counterManager.assignTokenToCounter(createdToken);
+    }
+
+    public void updateTokenStatus(Long tokenId, TokenStatus status, Boolean inQ) {
+         tokenRepository.updateTokenStatus(tokenId, status, inQ);
+    }
+
+    public Token getToken(Long tokenId) {
+        if(tokenId<=0) {
+            throw new RuntimeException("Invalid tokenId:"+ tokenId);
+        }
+        return tokenRepository.getToken(tokenId);
     }
 }

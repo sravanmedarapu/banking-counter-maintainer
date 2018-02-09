@@ -67,6 +67,7 @@ public class CounterRepository {
         for(Long counterId: counterIdList) {
             CounterDetails counterDetails = new CounterDetails();
             counterDetails.setTokenIdList(this.findCounterTokens(counterId));
+            counterDetails.setServiceTypes(findCounterServices(counterId));
             counterDetails.setActive(true);
             counterDetails.setCounterId(counterId);
             counterDetailsList.add(counterDetails);
@@ -74,8 +75,6 @@ public class CounterRepository {
 
         return counterDetailsList;
     }
-
-
 }
 
 class  CounterRowMapper implements RowMapper<CounterDetails>

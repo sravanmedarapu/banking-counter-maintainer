@@ -2,6 +2,7 @@ import com.counter.maintainer.config.TokenMaintenanceApp;
 import com.counter.maintainer.data.contracts.*;
 import com.counter.maintainer.repository.CounterRepository;
 import com.counter.maintainer.service.TokenService;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class TokenCounterDetailsTest
     @Autowired
     private TokenService tokenService;
 
-    @Test
+    //@Test
     public void findAllUsers() {
         List<CounterDetails> counterDetails = counterRepository.getCountersStatus();
         assertNotNull(counterDetails);
@@ -32,13 +33,10 @@ public class TokenCounterDetailsTest
         counterRepository.getAvailableCounters(ServiceType.WITHDRAW);
     }
 
-    @Test
+    //@Test
     public void createTokenForNewCustomer() {
-
-
-
         Token createdtToken = tokenService.createToken(getFakeToken(ServicePriority.PREMIUM));
-
+        Assert.assertTrue(createdtToken.getTokenId()>0);
     }
 
     public static Token getFakeToken(ServicePriority servicePriority) {
@@ -62,6 +60,12 @@ public class TokenCounterDetailsTest
     public static Token getFakeToken(ServicePriority servicePriority, long tokenId) {
         Token token = getFakeToken( servicePriority);
         token.setTokenId(tokenId);
+        return token;
+    }
+
+    public static Token getFakeToken(ServicePriority servicePriority, ServiceType serviceType) {
+        Token token = getFakeToken( servicePriority);
+        token.setServiceType(serviceType);
         return token;
     }
 

@@ -4,10 +4,11 @@ import com.counter.maintainer.data.contracts.*;
 import com.counter.maintainer.exceptions.EmptyCounterQueueException;
 import com.counter.maintainer.exceptions.InvalidTokenException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 public class CounterDesk extends Thread{
 
-    @Autowired
     private CounterService counterService;
     private CounterQueue counterQueue;
     private Boolean isFree = false;
@@ -16,7 +17,9 @@ public class CounterDesk extends Thread{
     private Boolean isCounterOpen = true;
     private CounterType counterType;
 
-    public CounterDesk(Long empId, CounterType counterType) {
+    public CounterDesk(CounterService counterService, CounterDetails counterDetails, Long empId, CounterType counterType) {
+        this.counterService = counterService;
+        this.counterDetails = counterDetails;
         this.empId = empId;
         this.counterType = counterType;
         this.counterQueue = new CounterQueue(counterType);
@@ -75,15 +78,16 @@ public class CounterDesk extends Thread{
     @Override
     public void run() {
         while (true) {
-            if(isFree) {
-                try {
-                    Token token = counterQueue.fetchToken();
-                    serveToken(token);
-                } catch (EmptyCounterQueueException e) {
-                    //ignore
-                }
+            try {
+                Token token = counterQueue.fetchToken();
+                serveToken(token);
+            } catch (EmptyCounterQueueException e) {
+                //ignore
             }
         }
     }
+
+
+
 
 }

@@ -1,5 +1,6 @@
 package com.counter.maintainer.controller;
 
+import com.counter.maintainer.service.TokenManager;
 import com.counter.maintainer.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +22,9 @@ public class TokenController {
 
 	@Autowired
 	TokenService tokenService;
+
+	@Autowired
+	TokenManager tokenManager;
 	
 
 	@RequestMapping(method=RequestMethod.POST, value="/token/employee/{employeeId}/update")
@@ -45,8 +49,12 @@ public class TokenController {
 		createdToken = tokenService.createToken(token);
 		return createdToken;
 	}
-	
-	
+
+
+	@RequestMapping(method=RequestMethod.GET, value="/token/{tokenId}")
+	public Token getToken(@PathVariable long tokenId) {
+		return tokenService.getToken(tokenId);
+	}
 	
 
 }

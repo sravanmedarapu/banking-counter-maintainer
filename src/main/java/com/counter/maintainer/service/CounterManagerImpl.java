@@ -21,7 +21,7 @@ public class CounterManagerImpl implements CounterManager {
     private List<CounterDesk> counterList = new ArrayList<>();
 
     @Autowired
-    protected CounterService counterService1;
+    protected CounterService counterService;
 
     @Autowired
     private CounterRepository counterRepository;
@@ -34,7 +34,7 @@ public class CounterManagerImpl implements CounterManager {
 
 
     @EventListener(ApplicationReadyEvent.class)
-    public void doSomethingAfterStartup() {
+    public void initCounters() {
         List<CounterDetails> counterDetailsList = counterRepository.getAvailableCounters();
         List<Employee> employeeList= employeeRepository.getEmployees();
 
@@ -43,23 +43,20 @@ public class CounterManagerImpl implements CounterManager {
         }
         for(CounterDetails counterDetails: counterDetailsList) {
             //TODO: update to fetch and empId and counterType
-            CounterDesk counterDesk = new CounterDesk(employeeList.get(0).getEmployeeId(), CounterType.BOTH);
+            CounterDesk counterDesk = new CounterDesk(counterService, counterDetails, employeeList.get(0).getEmployeeId(), CounterType.BOTH);
             counterDesk.start();
             counterList.add(counterDesk);
         }
     }
-/*
-    @Autowired
-    CounterManagerImpl() {
-
-
-    }*/
 
     @Override
     public Token assignTokenToCounter(Token token) {
-
         return assignToken(token);
+    }
 
+    @Override
+    public List<CounterDetails> getCounterStatus() {
+        return counterRepository.getAvailableCounters();
     }
 
     private Token assignToken(Token token) {
@@ -67,15 +64,14 @@ public class CounterManagerImpl implements CounterManager {
         if(counterDesks.isEmpty()) {
             throw new CountersNotAvailableException();
         }
-        if(token.getServicePriority() == ServicePriority.PREMIUM) {
             Integer minQueueLength = Integer.MIN_VALUE;
             CounterDesk minCounterDesk = counterDesks.get(0);
             for(CounterDesk counterDesk : counterDesks) {
                 int curMinLegth = counterDesk.getMinQueueLength(token.getServicePriority());
-                if(minQueueLength > curMinLegth) {
+                if (minQueueLength > curMinLegth) {
                     minQueueLength = curMinLegth;
                     minCounterDesk = counterDesk;
-                    if(minQueueLength == 0) {
+                    if (minQueueLength == 0) {
                         //found empty queue no need to search other queues
                         break;
                     }
@@ -83,7 +79,6 @@ public class CounterManagerImpl implements CounterManager {
             }
             minCounterDesk.addTokenToQueue(token);
             token.setCounterId(minCounterDesk.getCounterId());
-        }
 
         return token;
 
@@ -102,6 +97,4 @@ public class CounterManagerImpl implements CounterManager {
             ).collect(Collectors.toList());
         }
     }
-
-
 }

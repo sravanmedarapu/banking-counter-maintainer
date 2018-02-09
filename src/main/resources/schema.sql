@@ -28,9 +28,10 @@ CREATE TABLE IF NOT EXISTS  token (
     tokenId int auto_increment NOT NULL,
     customerId int NOT NULL,
     serviceID int not null,
-     inQ BOOLEAN DEFAULT TRUE,
+    inQ BOOLEAN DEFAULT TRUE,
     comments varchar(256),
     actionItems varchar(256),
+    status varchar(128),
     PRIMARY KEY (tokenId),
     FOREIGN KEY (customerId) REFERENCES customer(customerId),
     FOREIGN KEY (serviceID) REFERENCES serviceTypes(serviceID)
