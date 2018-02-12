@@ -56,8 +56,11 @@ CREATE TABLE IF NOT EXISTS counterServices (
     counterId int NOT NULL,
     serviceID int not null,
     active BOOLEAN DEFAULT FALSE,
-    PRIMARY KEY (id),
-    FOREIGN KEY (serviceID) REFERENCES ServiceTypes(serviceID)
+    employeeId int NOT NULL,
+    counterType varchar(128) not null,
+    PRIMARY KEY (id, employeeId),
+    FOREIGN KEY (serviceID) REFERENCES ServiceTypes(serviceID),
+    FOREIGN KEY (employeeId) REFERENCES employee(employeeId)
 );
 
 DROP TABLE IF EXISTS counterStatus;

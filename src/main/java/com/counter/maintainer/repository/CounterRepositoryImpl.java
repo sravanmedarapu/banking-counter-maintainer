@@ -1,6 +1,7 @@
 package com.counter.maintainer.repository;
 
 import com.counter.maintainer.data.contracts.CounterDetails;
+import com.counter.maintainer.data.contracts.CounterType;
 import com.counter.maintainer.data.contracts.TokenType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -62,14 +63,12 @@ public class CounterRepositoryImpl implements CounterRepository {
     public List<CounterDetails> getAvailableCounters() {
         List<CounterDetails> counterDetailsList = new ArrayList<CounterDetails>();
 
-        List<Long> counterIdList = jdbcTemplate.queryForList("select DISTINCT counterId from counterServices where active='true'", Long.class);
+        List<CounterDetails> counterIdList = jdbcTemplate.query("select * from counterServices where active='true' and Id in (select max(id) from counterServices group by counterid)", new CounterDetailsRowMapper());
 
-        for(Long counterId: counterIdList) {
-            CounterDetails counterDetails = new CounterDetails();
-            counterDetails.setTokenIdList(this.findCounterTokens(counterId));
-            counterDetails.setTokenTypes(findCounterServices(counterId));
+        for(CounterDetails counterDetails: counterIdList) {
+            counterDetails.setTokenIdList(findCounterTokens(counterDetails.getCounterId()));
+            counterDetails.setTokenTypes(findCounterServices(counterDetails.getCounterId()));
             counterDetails.setActive(true);
-            counterDetails.setCounterId(counterId);
             counterDetailsList.add(counterDetails);
         }
 
@@ -85,6 +84,21 @@ class  CounterRowMapper implements RowMapper<CounterDetails>
         CounterDetails counterDetails = new CounterDetails();
         counterDetails.setCounterId(rs.getInt("counterId"));
         counterDetails.setActive(rs.getBoolean("active"));
+        return counterDetails;
+    }
+}
+
+class  CounterDetailsRowMapper implements RowMapper<CounterDetails>
+{
+    @Override
+    public CounterDetails mapRow(ResultSet rs, int rowNum) throws SQLException
+    {
+        CounterDetails counterDetails = new CounterDetails();
+        counterDetails.setCounterId(rs.getInt("counterId"));
+        counterDetails.setActive(rs.getBoolean("active"));
+        counterDetails.setCounterId(rs.getLong("counterId"));
+        counterDetails.setEmployeeId(rs.getLong("employeeId"));
+        counterDetails.setCounterType(CounterType.valueOf(rs.getString("counterType")));
         return counterDetails;
     }
 }

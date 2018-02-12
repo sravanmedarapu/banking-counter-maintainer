@@ -12,6 +12,10 @@ public class CounterDetails {
 
 	private Boolean isActive;
 
+	private long employeeId;
+
+	private CounterType counterType;
+
 	public long getCounterId() {
 		return counterId;
 	}
@@ -45,6 +49,22 @@ public class CounterDetails {
 
 	public void setTokenIdList(List<Long> tokenIdList) {
 		this.tokenIdList = tokenIdList;
+	}
+
+	public long getEmployeeId() {
+		return employeeId;
+	}
+
+	public void setEmployeeId(long employeeId) {
+		this.employeeId = employeeId;
+	}
+
+	public CounterType getCounterType() {
+		return counterType;
+	}
+
+	public void setCounterType(CounterType counterType) {
+		this.counterType = counterType;
 	}
 }
 

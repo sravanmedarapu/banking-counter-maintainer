@@ -44,8 +44,7 @@ public class CounterManagerImpl implements CounterManager {
         }
         for(CounterDetails counterDetails: counterDetailsList) {
             List<ServiceType> serviceTypes = getServiceTypeList(employeeList.get(0));
-            //TODO: update to fetch and empId and counterType
-            CounterDesk counterDesk = new CounterDesk(counterService, counterDetails, employeeList.get(0).getEmployeeId(), CounterType.BOTH,
+            CounterDesk counterDesk = new CounterDesk(counterService, counterDetails, counterDetails.getEmployeeId(), counterDetails.getCounterType(),
                                                       serviceTypes);
             counterDesk.start();
             counterList.add(counterDesk);
@@ -75,7 +74,7 @@ public class CounterManagerImpl implements CounterManager {
                 minQueueLength = curMinLength;
                 minCounterDesk = counterDesk;
                 if (minQueueLength == 0) {
-                    //found empty queue no need to search other queues
+                    //found empty queue, no need to search other queues
                     break;
                 }
             }
