@@ -18,19 +18,11 @@ import org.springframework.stereotype.Repository;
 import com.counter.maintainer.data.contracts.Customer;
 
 @Repository
-public class CustomerRepository /*extends JpaRepository<Customer, Long>*/{
+public class CustomerRepositoryImpl {
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
-	/*
-	@Query("select c.customerId as customerId, c.name as name, c.phoneNumber as phoneNumber, c.typeOfService as typeOfService,"
-			+ " add.streeName as streeName, add.city as city, add.state as state, add.zipCode as zipCode, add.country as country"
-			+ " from customer c"
-			+ " left outer join address add "
-			+ " on c.customerId= add.customerId")
-			*/
-			
-	//Customer findCustomerById(Long customerId);
+
 	
 	public Customer save(Customer customer) {
 		KeyHolder idHolder = new GeneratedKeyHolder();
