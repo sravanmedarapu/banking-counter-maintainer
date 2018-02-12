@@ -1,9 +1,9 @@
 # banking-counterDetails-maintainer
-Create webservice which creates a token for banking system and assign to nearest available counter.
 
 # Problem​ ​Statement
 
-Assign tokens to counter.
+Create webservice which creates a token for banking system and assign to nearest available counter.
+
 
 *How to run?*
     ````mvn spring-boot:run````
@@ -44,10 +44,11 @@ GET: http://localhost:8080/token/{tokenId}
 GET: http://localhost:8080/counter/status
 ````
 
+# Token Assign Design:
+![Token Assigning Design](https://github.com/sravanmedarapu/banking-counter-maintainer/blob/master/doc/BankCounter-Token.png)
 
-[Token Assigning Design](https://github.com/sravanmedarapu/banking-counter-maintainer/blob/master/doc/BankCounter-Token.png)
-
-[DB Schema](https://github.com/sravanmedarapu/banking-counter-maintainer/blob/master/doc/DB%20SCHEMA%20DIA.svg)
+# DB Shema
+![DB Schema](https://github.com/sravanmedarapu/banking-counter-maintainer/blob/master/doc/DB%20SCHEMA%20DIA.svg)
     
     
     
