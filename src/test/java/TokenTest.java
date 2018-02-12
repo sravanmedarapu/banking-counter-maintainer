@@ -37,23 +37,20 @@ public class TokenTest
         Assert.assertTrue(newCustomerToken.getCounterId()>0);
         Assert.assertTrue(newCustomerToken.getStatus()==TokenStatus.QUEUED);
         Assert.assertTrue(tokenService.getToken(newCustomerToken.getTokenId()).getStatus() == TokenStatus.QUEUED);
-        Thread.sleep(15 * SEC);
+        Thread.sleep(8 * SEC);
 
         Assert.assertTrue(tokenService.getToken(newCustomerToken.getTokenId()).getStatus() == TokenStatus.COMPLETED);
 
-
+        tokenReq = getFakeToken(ServicePriority.PREMIUM, TokenType.WITHDRAW);
         long customerId = newCustomerToken.getCustomerId();
         tokenReq.setCustomerId(customerId);
         Token existingCustomerToken = tokenService.createToken(tokenReq);
 
         Assert.assertTrue(existingCustomerToken.getCustomerId() == customerId);
         Assert.assertTrue(tokenService.getToken(existingCustomerToken.getTokenId()).getStatus() == TokenStatus.QUEUED);
-        Thread.sleep(15 * SEC);
+        Thread.sleep(8 * SEC);
 
         Assert.assertTrue(tokenService.getToken(existingCustomerToken.getTokenId()).getStatus() == TokenStatus.COMPLETED);
-
-
-
     }
 
     public static Token getFakeToken(ServicePriority servicePriority) {

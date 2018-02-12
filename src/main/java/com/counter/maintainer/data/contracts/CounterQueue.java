@@ -27,8 +27,8 @@ public class CounterQueue {
             if (serveRatio == null || serveRatio.isEmpty()) {
                 throw new RuntimeException("Should pass serveRation for CounterType.BOTH in regular:premium format ex:1:2");
             } else if(serveRatio.split(":").length==2) {
-                regularQueueServeRatio = Integer.valueOf(serveRatio.split(":")[0]);
-                premiumQueueServeRatio = Integer.valueOf(serveRatio.split(":")[1]);
+                regularQueueServeRatio = Integer.valueOf(serveRatio.split(":")[1]);
+                premiumQueueServeRatio = Integer.valueOf(serveRatio.split(":")[0]);
                 recentServedServiceList = new CircularFifoQueue<ServicePriority>(premiumQueueServeRatio);
             } else {
                 throw new RuntimeException("regular, premium serve ration not defined properly, correct format regular:premium ex: 1:2");
@@ -56,7 +56,7 @@ public class CounterQueue {
         if(regularQueue.contains(servedToken)) {
             regularQueue.poll();
         } else if(premiumQueue.contains(servedToken)) {
-            regularQueue.poll();
+            premiumQueue.poll();
         }
 
         if(counterQueueType.equals(CounterType.BOTH)) {
@@ -84,8 +84,10 @@ public class CounterQueue {
     }
 
     private Token fetchTokenFromBothCounter() throws EmptyCounterQueueException {
-        if((recentServedServiceList.isEmpty() || recentServedServiceList.contains(ServicePriority.REGULAR))
-            && premiumQueue.size()>0) {
+        if( premiumQueue.size()>0 &&
+            (recentServedServiceList.isEmpty()
+             || recentServedServiceList.size() != premiumQueueServeRatio
+             ||recentServedServiceList.contains(ServicePriority.REGULAR))) {
             return premiumQueue.peek();
         } else if(regularQueue.size()>0) {
             return regularQueue.peek();

@@ -29,10 +29,10 @@ public class TokenController {
 	@RequestMapping(method=RequestMethod.POST, value="/token/create")
 	public Token createToken(@RequestBody Token token) {
 		Token createdToken = new Token();
-		if(token.getCustomerId() == null) {
+		/*if(token.getCustomerId() == null) {
 			Customer customer = customerService.createCustomer(token.getCustomer());
 			createdToken.setCustomer(customer);
-		}
+		}*/
 
 		createdToken = tokenService.createToken(token);
 		return createdToken;

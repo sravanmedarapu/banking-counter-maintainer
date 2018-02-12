@@ -16,33 +16,33 @@ public class CounterDetailsQueueTest {
 
     @Test(expected = RuntimeException.class)
     public void counterQueueAddTest() {
-        CounterQueue premiumQeue = new CounterQueue(CounterType.PREMIUM);
-        CounterQueue regularQeue = new CounterQueue(CounterType.PREMIUM);
-        CounterQueue bothQeue = new CounterQueue(CounterType.BOTH);
+        CounterQueue premiumQueue = new CounterQueue(CounterType.PREMIUM);
+        CounterQueue regularQueue = new CounterQueue(CounterType.PREMIUM);
+        CounterQueue bothQueue = new CounterQueue(CounterType.BOTH);
 
-        bothQeue.addTokenToQueue(TokenTest.getFakeToken(ServicePriority.REGULAR));
-        bothQeue.addTokenToQueue(TokenTest.getFakeToken(ServicePriority.REGULAR));
-        bothQeue.addTokenToQueue(TokenTest.getFakeToken(ServicePriority.PREMIUM));
-        bothQeue.addTokenToQueue(TokenTest.getFakeToken(ServicePriority.REGULAR));
+        bothQueue.addTokenToQueue(TokenTest.getFakeToken(ServicePriority.REGULAR));
+        bothQueue.addTokenToQueue(TokenTest.getFakeToken(ServicePriority.REGULAR));
+        bothQueue.addTokenToQueue(TokenTest.getFakeToken(ServicePriority.PREMIUM));
+        bothQueue.addTokenToQueue(TokenTest.getFakeToken(ServicePriority.REGULAR));
 
-        regularQeue.addTokenToQueue(TokenTest.getFakeToken(ServicePriority.PREMIUM));
-        regularQeue.addTokenToQueue(TokenTest.getFakeToken(ServicePriority.REGULAR));
+        regularQueue.addTokenToQueue(TokenTest.getFakeToken(ServicePriority.PREMIUM));
+        regularQueue.addTokenToQueue(TokenTest.getFakeToken(ServicePriority.REGULAR));
 
-        premiumQeue.addTokenToQueue(TokenTest.getFakeToken(ServicePriority.PREMIUM));
-        premiumQeue.addTokenToQueue(TokenTest.getFakeToken(ServicePriority.REGULAR));
+        premiumQueue.addTokenToQueue(TokenTest.getFakeToken(ServicePriority.PREMIUM));
+        premiumQueue.addTokenToQueue(TokenTest.getFakeToken(ServicePriority.REGULAR));
     }
 
     @Test
     public void counterQueueOrderTest() throws EmptyCounterQueueException {
         CounterQueue bothQeue = new CounterQueue(CounterType.BOTH);
 
-        Token regular1 = TokenTest.getFakeToken(ServicePriority.REGULAR, 1);
-        Token regular2 = TokenTest.getFakeToken(ServicePriority.REGULAR, 2);
-        Token regular3 = TokenTest.getFakeToken(ServicePriority.REGULAR, 3);
+        Token regular1 = TokenTest.getFakeToken(ServicePriority.REGULAR, 10);
+        Token regular2 = TokenTest.getFakeToken(ServicePriority.REGULAR, 20);
+        Token regular3 = TokenTest.getFakeToken(ServicePriority.REGULAR, 30);
 
-        Token premium1 = TokenTest.getFakeToken(ServicePriority.PREMIUM, 4);
-        Token premium2 = TokenTest.getFakeToken(ServicePriority.PREMIUM, 5);
-        Token premium3 = TokenTest.getFakeToken(ServicePriority.PREMIUM, 6);
+        Token premium1 = TokenTest.getFakeToken(ServicePriority.PREMIUM, 40);
+        Token premium2 = TokenTest.getFakeToken(ServicePriority.PREMIUM, 50);
+        Token premium3 = TokenTest.getFakeToken(ServicePriority.PREMIUM, 60);
 
 
         bothQeue.addTokenToQueue(regular1);
@@ -55,10 +55,14 @@ public class CounterDetailsQueueTest {
         bothQeue.addTokenToQueue(premium3);
 
         Assert.assertTrue(bothQeue.fetchToken().getTokenId() == premium1.getTokenId());
+        bothQeue.addToRecentServedList(premium1);
         Assert.assertTrue(bothQeue.fetchToken().getTokenId() ==  premium2.getTokenId());
+        bothQeue.addToRecentServedList(premium2);
         Assert.assertTrue(bothQeue.fetchToken().getTokenId() == regular1.getTokenId());
-        Assert.assertTrue(bothQeue.fetchToken().getTokenId() == premium2.getTokenId());
-        Assert.assertTrue(bothQeue.fetchToken().getTokenId() == regular3.getTokenId());
+        bothQeue.addToRecentServedList(regular1);
+        Assert.assertTrue(bothQeue.fetchToken().getTokenId() == premium3.getTokenId());
+        bothQeue.addToRecentServedList(premium3);
+        Assert.assertTrue(bothQeue.fetchToken().getTokenId() == regular2.getTokenId());
     }
 
 }

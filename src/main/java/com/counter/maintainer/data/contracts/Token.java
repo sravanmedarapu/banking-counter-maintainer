@@ -25,7 +25,7 @@ public class Token implements Comparable<Token> {
 	private TokenType tokenType;
 
 	@JsonIgnore
-	private Queue<Enum> actionItems;
+	private Queue<Enum> actionItems = null;
 	
 	public Long getTokenId() {
 		return tokenId;
