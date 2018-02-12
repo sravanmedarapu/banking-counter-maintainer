@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS ServiceTypes (
     serviceId int auto_increment NOT NULL,
     name varchar(128) not null,
     avgTimeINMIN int(10) not null,
-    PRIMARY KEY (name)
+    PRIMARY KEY (name, serviceId)
 );
 
 DROP TABLE IF EXISTS token;
@@ -48,6 +48,7 @@ CREATE TABLE IF NOT EXISTS  employee (
     employeeId int auto_increment NOT NULL,
     name varchar(128) NOT NULL,
     role varchar(128) not null,
+     PRIMARY KEY (employeeId)
 );
 
 DROP TABLE IF EXISTS counterServices;
@@ -65,11 +66,13 @@ CREATE TABLE IF NOT EXISTS counterServices (
 
 DROP TABLE IF EXISTS counterStatus;
 CREATE TABLE IF NOT EXISTS  counterStatus (
+    id int auto_increment NOT NULL,
     tokenId int NOT NULL,
     counterId int NOT NULL,
     waitTimeInMin int,
     inQ BOOLEAN DEFAULT TRUE,
     active BOOLEAN DEFAULT TRUE,
+    PRIMARY KEY (id),
     FOREIGN KEY (tokenId) REFERENCES token(tokenId)
 );
 
