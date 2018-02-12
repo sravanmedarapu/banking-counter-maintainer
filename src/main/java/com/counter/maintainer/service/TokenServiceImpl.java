@@ -4,6 +4,7 @@ import com.counter.maintainer.data.contracts.Customer;
 import com.counter.maintainer.data.contracts.ServicePriority;
 import com.counter.maintainer.data.contracts.Token;
 import com.counter.maintainer.data.contracts.TokenStatus;
+import com.counter.maintainer.exceptions.InvalidTokenException;
 import com.counter.maintainer.repository.CounterRepository;
 import com.counter.maintainer.repository.CustomerRepository;
 import com.counter.maintainer.repository.TokenRepository;
@@ -54,7 +55,7 @@ public class TokenServiceImpl implements TokenService{
 
     public Token getToken(Long tokenId) {
         if (tokenId <= 0) {
-            throw new RuntimeException("Invalid tokenId:" + tokenId);
+            throw new InvalidTokenException("Invalid tokenId:" + tokenId);
         }
         return tokenRepository.getToken(tokenId);
     }

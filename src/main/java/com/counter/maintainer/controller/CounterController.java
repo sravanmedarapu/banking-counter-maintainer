@@ -18,11 +18,16 @@ public class CounterController {
 	@Autowired
 	private CounterService counterService;
 
+	/**
+	 *
+	 * returns available counters details along with current counter queue ticketId list
+	 *
+	 * @return
+	 */
 	@RequestMapping("/counter/status")
 	public List<CounterDetails> getCounterStatus() {
 
 		return counterService.getCounterStatus();
-
 	}
 
 	
