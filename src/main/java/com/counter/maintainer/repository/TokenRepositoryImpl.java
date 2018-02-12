@@ -22,7 +22,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Repository
-public class TokenRepository {
+public class TokenRepositoryImpl implements TokenRepository {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;

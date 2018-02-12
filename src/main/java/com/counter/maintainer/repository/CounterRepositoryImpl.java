@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class CounterRepository {
+public class CounterRepositoryImpl implements CounterRepository {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;

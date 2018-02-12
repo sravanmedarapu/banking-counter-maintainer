@@ -18,7 +18,7 @@ import org.springframework.stereotype.Repository;
 import com.counter.maintainer.data.contracts.Customer;
 
 @Repository
-public class CustomerRepositoryImpl {
+public class CustomerRepositoryImpl implements CustomerRepository{
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
@@ -48,14 +48,5 @@ public class CustomerRepositoryImpl {
 		}
 		return customer;
 	}
-	
-	public List<Customer> findAll() {
-		return null;
-	}
-	
-	public Customer findOne(Long customerId) {
-		return null;
-	}
-	
 
 }
