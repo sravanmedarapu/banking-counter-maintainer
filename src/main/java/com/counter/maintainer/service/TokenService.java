@@ -13,4 +13,6 @@ public interface TokenService {
 
     void updateCounter(Long tokenId, Long counterId, Boolean inQ );
 
+    Token updateTokenComments(Long tokenId, String comment);
+
 }

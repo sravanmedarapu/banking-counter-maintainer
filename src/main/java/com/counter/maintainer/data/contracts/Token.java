@@ -3,7 +3,7 @@ package com.counter.maintainer.data.contracts;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.joda.time.DateTime;
 
-import javax.persistence.*;
+import java.util.Queue;
 
 public class Token implements Comparable<Token> {
 	private Long tokenId;
@@ -11,7 +11,6 @@ public class Token implements Comparable<Token> {
 	private Long customerId;
 	private Customer customer;
 	private String comments;
-	private String actionItems;
 	private TokenStatus status;
 	@JsonIgnore
 	private DateTime createdDate;
@@ -24,6 +23,9 @@ public class Token implements Comparable<Token> {
 	private DateTime counterAddedTime;
 
 	private TokenType tokenType;
+
+	@JsonIgnore
+	private Queue<Enum> actionItems;
 	
 	public Long getTokenId() {
 		return tokenId;
@@ -55,11 +57,11 @@ public class Token implements Comparable<Token> {
 	public void setComments(String comments) {
 		this.comments = comments;
 	}
-	public String getActionItems() {
+	public Queue<Enum> getActionItems() {
+		if(actionItems == null) {
+			actionItems = tokenType.getActionTimes();
+		}
 		return actionItems;
-	}
-	public void setActionItems(String actionItems) {
-		this.actionItems = actionItems;
 	}
 	public TokenStatus getStatus() {
 		return status;
@@ -92,8 +94,12 @@ public class Token implements Comparable<Token> {
 		this.tokenType = tokenType;
 	}
 
-	public ServiceType getNextServiceType() {
-		return (ServiceType) tokenType.getActionTimes().peek();
+	public Enum<ServiceType> peekNextServiceType() {
+		return getActionItems().peek();
+	}
+
+	public Enum<ServiceType> pollNextServiceType() {
+		return getActionItems().poll();
 	}
 
 	public Boolean getInQ() {

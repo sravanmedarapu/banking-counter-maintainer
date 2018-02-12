@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS  token (
     customerId int NOT NULL,
     serviceID int not null,
     inQ BOOLEAN DEFAULT TRUE,
-    comments varchar(256),
+    comments varchar(512) DEFAULT '',
     actionItems varchar(256),
     status varchar(128),
     servicePriority varchar(128),

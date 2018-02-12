@@ -10,9 +10,11 @@ import java.util.List;
 public interface CounterService {
     List<CounterDetails> getAvailableCounters(TokenType tokenType);
 
-    Token serveToken(Token token, long empId);
+    Token serveToken(Token token, CounterDesk counterDesk);
 
     Boolean updateTokenStatus(Long tokenId, TokenStatus tokenStatus, Long emplId);
+
+    Token updateTokenComments(Long tokenId, String comment);
 
     List<CounterDetails> getCounterStatus();
 }

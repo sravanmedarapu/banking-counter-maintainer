@@ -4,6 +4,7 @@ import com.counter.maintainer.data.contracts.ServicePriority;
 import com.counter.maintainer.data.contracts.TokenType;
 import com.counter.maintainer.data.contracts.Token;
 import com.counter.maintainer.data.contracts.TokenStatus;
+import com.counter.maintainer.exceptions.TokenNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -59,11 +60,14 @@ public class TokenRepository {
                            + "left join serviceTypes as st on t.serviceID=st.serviceID "
                            + "where t.tokenId =?";
 
-        return jdbcTemplate.queryForObject(query, new Object[]{tokenId}, new TokenRowMapper());
+        List<Token> tokenList = jdbcTemplate.query(query, new Object[]{tokenId}, new TokenRowMapper());
+        if (tokenList.size() == 0) {
+            throw new TokenNotFoundException(tokenId);
+        }
+        return tokenList.get(0);
     }
 
 
-    @Query(value="update counterStatus set counterId=?2 where tokenId=?1", nativeQuery = true)
     public void updateCounter(Long tokenId, Long counterId, Boolean inQ) {
         if(inQ != true) {
             // existing entry
@@ -72,6 +76,10 @@ public class TokenRepository {
             jdbcTemplate.update("insert into counterStatus(tokenId, counterId, inQ) values(?1,?2, ?3)", new Object[] { tokenId, counterId, inQ });
         }
 
+    }
+
+    public void updateTokenComments(Long tokenId, String comment) {
+        jdbcTemplate.update("update token set comments = CONCAT(comments, ' ; ', ?2) where tokenId=?1", new Object[] { tokenId, comment });
     }
 
     public void updateTokenStatus(Long tokenId, TokenStatus status, boolean inQ){
@@ -91,7 +99,6 @@ class TokenRowMapper implements RowMapper<Token>
         token.setInQ(rs.getBoolean("inQ"));
         token.setStatus(TokenStatus.valueOf(rs.getString("status")));
         token.setComments(rs.getString("comments"));
-        token.setActionItems(rs.getString("actionItems"));
         token.setTokenType(TokenType.valueOf(rs.getString("name")));
         token.setServicePriority(ServicePriority.valueOf(rs.getString("servicePriority")));
         token.setCounterId(rs.getLong("counterId"));

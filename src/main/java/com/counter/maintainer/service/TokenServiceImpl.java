@@ -46,6 +46,12 @@ public class TokenServiceImpl implements TokenService{
         tokenRepository.updateCounter(tokenId, counterId, inQ);
     }
 
+    @Override
+    public Token updateTokenComments(Long tokenId, String comment) {
+        tokenRepository.updateTokenComments(tokenId, comment);
+        return tokenRepository.getToken(tokenId);
+    }
+
     public Token getToken(Long tokenId) {
         if (tokenId <= 0) {
             throw new RuntimeException("Invalid tokenId:" + tokenId);

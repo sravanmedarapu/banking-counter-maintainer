@@ -4,9 +4,6 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import static com.counter.maintainer.data.contracts.ServiceType.MANAGER_APPROVAL;
-import static com.counter.maintainer.data.contracts.ServiceType.VERIFICATION;
-
 public enum TokenType {
 	
 	WITHDRAW {
@@ -15,7 +12,7 @@ public enum TokenType {
 		}
 
 		public Queue<Enum> getActionTimes() {
-			return new LinkedList<>(Arrays.asList(VERIFICATION, WITHDRAW));
+			return new LinkedList<>(Arrays.asList(ServiceType.VERIFICATION, ServiceType.WITHDRAW));
 		}
 
 	}, DEPOSIT {
@@ -23,28 +20,28 @@ public enum TokenType {
 			return 5;
 		}
 		public Queue<Enum> getActionTimes() {
-			return new LinkedList<>(Arrays.asList(VERIFICATION, WITHDRAW));
+			return new LinkedList<Enum>(Arrays.asList(ServiceType.VERIFICATION, ServiceType.WITHDRAW));
 		}
 	}, CHECK_DEPOSIT {
 		public int getWaitTimeInMins() {
 			return 10;
 		}
 		public Queue<Enum> getActionTimes() {
-			return new LinkedList<>(Arrays.asList(VERIFICATION, CHECK_DEPOSIT));
+			return new LinkedList<>(Arrays.asList(ServiceType.VERIFICATION, ServiceType.CHECK_DEPOSIT));
 		}
 	}, ACCOUNT_CLOSE {
 		public int getWaitTimeInMins() {
 			return 15;
 		}
 		public Queue<Enum> getActionTimes() {
-			return new LinkedList<>(Arrays.asList(VERIFICATION, MANAGER_APPROVAL, ACCOUNT_CLOSE));
+			return new LinkedList<Enum>(Arrays.asList(ServiceType.VERIFICATION, ServiceType.MANAGER_APPROVAL, ServiceType.ACCOUNT_CLOSE));
 		}
 	}, ACCOUNT_OPEN {
 		public int getWaitTimeInMins() {
 			return 15;
 		}
 		public Queue<Enum> getActionTimes() {
-			return new LinkedList<>(Arrays.asList(VERIFICATION, MANAGER_APPROVAL, ACCOUNT_OPEN));
+			return new LinkedList<>(Arrays.asList(ServiceType.VERIFICATION, ServiceType.MANAGER_APPROVAL, ServiceType.ACCOUNT_OPEN));
 		}
 	};
 

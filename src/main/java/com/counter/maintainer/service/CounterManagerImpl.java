@@ -70,9 +70,9 @@ public class CounterManagerImpl implements CounterManager {
         Integer minQueueLength = Integer.MAX_VALUE;
         CounterDesk minCounterDesk = counterDesks.get(0);
         for(CounterDesk counterDesk : counterDesks) {
-            int curMinLegth = counterDesk.getMinQueueLength(token.getServicePriority());
-            if (minQueueLength > curMinLegth) {
-                minQueueLength = curMinLegth;
+            int curMinLength = counterDesk.getMinQueueLength(token.getServicePriority());
+            if (minQueueLength > curMinLength) {
+                minQueueLength = curMinLength;
                 minCounterDesk = counterDesk;
                 if (minQueueLength == 0) {
                     //found empty queue no need to search other queues
@@ -95,14 +95,14 @@ public class CounterManagerImpl implements CounterManager {
                           counterDesk.getCounterType() == CounterType.BOTH
                               || counterDesk.getCounterType() == CounterType.PREMIUM
             ).filter(counterDesk -> {
-                         return counterDesk.getServiceTypes().contains(token.getNextServiceType());
+                         return counterDesk.getServiceTypes().contains(token.peekNextServiceType());
                      }).collect(Collectors.toList());
         } else {
             return counterList.stream().filter(counterDesk ->
                           counterDesk.getCounterType() == CounterType.BOTH
                               || counterDesk.getCounterType() == CounterType.REGULAR
             ).filter(counterDesk -> {
-                return counterDesk.getServiceTypes().contains(token.getNextServiceType());
+                return counterDesk.getServiceTypes().contains(token.peekNextServiceType());
             }).collect(Collectors.toList());
         }
     }
