@@ -26,7 +26,7 @@ public class TokenController {
 	 * Creates new Token, If the customer not exist then will create new customer before creating token
 	 *
 	 */
-	@RequestMapping(method=RequestMethod.POST, value="/token/create")
+	@RequestMapping(method=RequestMethod.POST, value="/api/token/create")
 	public Token createToken(@RequestBody Token token) {
 		return tokenService.createToken(token);
 	}
@@ -36,7 +36,7 @@ public class TokenController {
 	 * @param tokenId
 	 * throws InvalidTokenException if tokenId is invalid
 	 */
-	@RequestMapping(method=RequestMethod.GET, value="/token/{tokenId}")
+	@RequestMapping(method=RequestMethod.GET, value="/api/token/{tokenId}")
 	public Token getToken(@PathVariable long tokenId) {
 		return tokenService.getToken(tokenId);
 	}

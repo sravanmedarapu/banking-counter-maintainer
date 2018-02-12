@@ -24,7 +24,7 @@ public class CounterController {
 	 *
 	 * @return
 	 */
-	@RequestMapping("/counter/status")
+	@RequestMapping("/api/counter/status")
 	public List<CounterDetails> getCounterStatus() {
 
 		return counterService.getCounterStatus();

@@ -1,6 +1,8 @@
 import com.counter.maintainer.TokenMaintenanceApp;
 import com.counter.maintainer.data.contracts.*;
+import com.counter.maintainer.exceptions.InsufficientPrivilegesException;
 import com.counter.maintainer.repository.CounterRepository;
+import com.counter.maintainer.service.CounterService;
 import com.counter.maintainer.service.TokenService;
 import com.counter.maintainer.service.TokenServiceImpl;
 import org.junit.Assert;
@@ -24,6 +26,9 @@ public class TokenTest
 
     @Autowired
     private TokenService tokenService;
+
+    @Autowired
+    private CounterService counterService;
 
     private static final long SEC =1000;
 
@@ -51,6 +56,15 @@ public class TokenTest
         Thread.sleep(8 * SEC);
 
         Assert.assertTrue(tokenService.getToken(existingCustomerToken.getTokenId()).getStatus() == TokenStatus.COMPLETED);
+    }
+
+    @Test(expected= InsufficientPrivilegesException.class)
+    public void tokenStatusUpdateTest() {
+        Employee attender = new Employee();
+        attender.setEmployeeId(7);
+        attender.setDesignation(EmployeeRole.ATTENDER);
+        Token token = getFakeToken(ServicePriority.PREMIUM, TokenType.DEPOSIT);
+        counterService.updateTokenStatus(token.getTokenId(), TokenStatus.COMPLETED, attender.getEmployeeId());
     }
 
     public static Token getFakeToken(ServicePriority servicePriority) {

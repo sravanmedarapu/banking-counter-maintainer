@@ -16,27 +16,7 @@ public class EmployeeRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public List<Employee> getEmployees() {
-        //TODO: yet to implement
-        List<Employee> employeeList = new ArrayList<Employee>();
-        Employee employee = new Employee();
-        employee.setDesignation(EmployeeRole.MANAGER);
-        employee.setEmployeeId(1);
-        employee.setName("ABC");
-
-        Employee employee2 = new Employee();
-        employee.setDesignation(EmployeeRole.OPERATOR);
-        employee.setEmployeeId(2);
-        employee.setName("provider 1");
-
-        employeeList.add(employee);
-        employeeList.add(employee2);
-
-        return employeeList;
-    }
-
-    public Boolean validatePermissions(Long employeeId) {
-        //TODO:
-        return true;
+    public EmployeeRole getEmployeeRole(Long employeeId) {
+        return EmployeeRole.valueOf(jdbcTemplate.queryForObject("select role from employee where employeeId=?",new Object[]{employeeId}, String.class));
     }
 }

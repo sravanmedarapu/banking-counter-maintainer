@@ -37,13 +37,12 @@ public class CounterManagerImpl implements CounterManager {
     @EventListener(ApplicationReadyEvent.class)
     public void initCounters() {
         List<CounterDetails> counterDetailsList = counterRepository.getAvailableCounters();
-        List<Employee> employeeList= employeeRepository.getEmployees();
 
         if(counterDetailsList.isEmpty()) {
             throw new RuntimeException("CounterDetails not available exception");
         }
         for(CounterDetails counterDetails: counterDetailsList) {
-            List<ServiceType> serviceTypes = getServiceTypeList(employeeList.get(0));
+            List<ServiceType> serviceTypes = getServiceTypeList(counterDetails.getEmployeeId());
             CounterDesk counterDesk = new CounterDesk(counterService, counterDetails, counterDetails.getEmployeeId(), counterDetails.getCounterType(),
                                                       serviceTypes);
             counterDesk.start();
@@ -106,8 +105,8 @@ public class CounterManagerImpl implements CounterManager {
         }
     }
 
-    public List<ServiceType> getServiceTypeList(Employee e) {
-        EmployeeRole role = e.getRole();
+    public List<ServiceType> getServiceTypeList(Long employeeId) {
+        EmployeeRole role = employeeRepository.getEmployeeRole(employeeId);
         switch (role) {
         case MANAGER:
             return Arrays.asList(MANAGER_APPROVAL, VERIFICATION);

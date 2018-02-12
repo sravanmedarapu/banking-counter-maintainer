@@ -1,6 +1,7 @@
 package com.counter.maintainer.service;
 
 import com.counter.maintainer.data.contracts.*;
+import com.counter.maintainer.exceptions.InsufficientPrivilegesException;
 import com.counter.maintainer.repository.CounterRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,8 @@ public class CounterServiceImpl implements CounterService {
     private CounterManager counterManager;
     @Autowired
     private TokenService tokenService;
+    @Autowired
+    private EmployeeService employeeService;
 
     private static final Logger logger = LoggerFactory.getLogger(CounterServiceImpl.class);
 
@@ -56,7 +59,13 @@ public class CounterServiceImpl implements CounterService {
     @Override
     public Boolean updateTokenStatus(Long tokenId, TokenStatus tokenStatus, Long emplId) {
         if(tokenStatus == TokenStatus.COMPLETED || tokenStatus == TokenStatus.CANCELLED) {
-            tokenService.updateTokenStatus(tokenId, tokenStatus, false);
+            EmployeeRole role = employeeService.getEmployeeRole(emplId);
+            if(role == EmployeeRole.MANAGER || role == EmployeeRole.OPERATOR) {
+                tokenService.updateTokenStatus(tokenId, tokenStatus, false);
+                } else {
+                throw new InsufficientPrivilegesException("Only MANAGER or OPERATOR have privileges to " + tokenStatus.name() + " the token");
+            }
+
         } else {
             tokenService.updateTokenStatus(tokenId, tokenStatus, true);
         }
