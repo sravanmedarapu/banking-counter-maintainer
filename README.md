@@ -48,7 +48,7 @@ GET: http://localhost:8080/counter/status
 ![Token Assigning Design](https://github.com/sravanmedarapu/banking-counter-maintainer/blob/master/doc/BankCounter-Token.png)
 
 # DB Shema
-![DB Schema](https://github.com/sravanmedarapu/banking-counter-maintainer/blob/master/doc/DB%20SCHEMA%20DIA.svg)
+![DB Schema](https://github.com/sravanmedarapu/banking-counter-maintainer/blob/master/doc/bank-api-db-schmea.png)
     
     
     
