@@ -67,23 +67,24 @@ public class CounterManagerImpl implements CounterManager {
         if(counterDesks.isEmpty()) {
             throw new CountersNotAvailableException();
         }
-            Integer minQueueLength = Integer.MAX_VALUE;
-            CounterDesk minCounterDesk = counterDesks.get(0);
-            for(CounterDesk counterDesk : counterDesks) {
-                int curMinLegth = counterDesk.getMinQueueLength(token.getServicePriority());
-                if (minQueueLength > curMinLegth) {
-                    minQueueLength = curMinLegth;
-                    minCounterDesk = counterDesk;
-                    if (minQueueLength == 0) {
-                        //found empty queue no need to search other queues
-                        break;
-                    }
+        Integer minQueueLength = Integer.MAX_VALUE;
+        CounterDesk minCounterDesk = counterDesks.get(0);
+        for(CounterDesk counterDesk : counterDesks) {
+            int curMinLegth = counterDesk.getMinQueueLength(token.getServicePriority());
+            if (minQueueLength > curMinLegth) {
+                minQueueLength = curMinLegth;
+                minCounterDesk = counterDesk;
+                if (minQueueLength == 0) {
+                    //found empty queue no need to search other queues
+                    break;
                 }
             }
-            minCounterDesk.addTokenToQueue(token);
-            token.setCounterId(minCounterDesk.getCounterId());
+        }
+        minCounterDesk.addTokenToQueue(token);
+        token.setCounterId(minCounterDesk.getCounterId());
         tokenService.updateCounter(token.getTokenId(), token.getCounterId(), true/*inQ*/);
-
+        token.setStatus(TokenStatus.QUEUED);
+        tokenService.updateTokenStatus(token.getTokenId(), TokenStatus.QUEUED, true/*inQ*/);
         return token;
 
     }

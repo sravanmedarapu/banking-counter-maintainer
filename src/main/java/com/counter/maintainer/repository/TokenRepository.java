@@ -50,11 +50,6 @@ public class TokenRepository {
 
     }
 
-    public List<Token> findAll() {
-        return null;
-
-    }
-
 
     @Transactional(readOnly=true)
     public Token getToken(long tokenId) {

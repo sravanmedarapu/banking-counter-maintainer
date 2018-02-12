@@ -16,7 +16,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = TokenMaintenanceApp.class)
-public class TokenCounterDetailsTest
+public class TokenTest
 {
     @Autowired
     private CounterRepository counterRepository;
