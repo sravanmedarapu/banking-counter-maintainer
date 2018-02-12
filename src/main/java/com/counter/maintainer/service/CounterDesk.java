@@ -3,26 +3,25 @@ package com.counter.maintainer.service;
 import com.counter.maintainer.data.contracts.*;
 import com.counter.maintainer.exceptions.EmptyCounterQueueException;
 import com.counter.maintainer.exceptions.InvalidTokenException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 public class CounterDesk extends Thread{
 
     private CounterService counterService;
     private CounterQueue counterQueue;
-    private Boolean isFree = false;
     private Long empId;
     private CounterDetails counterDetails;
-    private Boolean isCounterOpen = true;
     private CounterType counterType;
+    private List<ServiceType> serviceTypes;
 
-    public CounterDesk(CounterService counterService, CounterDetails counterDetails, Long empId, CounterType counterType) {
+    public CounterDesk(CounterService counterService, CounterDetails counterDetails, Long empId, CounterType counterType, List<ServiceType> serviceTypes) {
         this.counterService = counterService;
         this.counterDetails = counterDetails;
         this.empId = empId;
         this.counterType = counterType;
         this.counterQueue = new CounterQueue(counterType);
+        this.serviceTypes = serviceTypes;
     }
 
     public CounterDetails getCounterDetails() {
@@ -88,6 +87,13 @@ public class CounterDesk extends Thread{
     }
 
 
+    public List<ServiceType> getServiceTypes() {
+        return serviceTypes;
+    }
+
+    public void setServiceTypes(List<ServiceType> serviceTypes) {
+        this.serviceTypes = serviceTypes;
+    }
 
 
 }

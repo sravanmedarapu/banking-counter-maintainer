@@ -14,13 +14,10 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 @Component
-public class TokenServiceImpl {
+public class TokenServiceImpl implements TokenService{
 
     @Autowired
     private TokenRepository tokenRepository;
-
-    @Autowired
-    private CounterRepository counterRepository;
 
     @Autowired
     private CounterManager counterManager;
@@ -42,6 +39,11 @@ public class TokenServiceImpl {
 
     public void updateTokenStatus(Long tokenId, TokenStatus status, Boolean inQ) {
         tokenRepository.updateTokenStatus(tokenId, status, inQ);
+    }
+
+    @Override
+    public void updateCounter(Long tokenId, Long counterId, Boolean inQ) {
+        tokenRepository.updateCounter(tokenId, counterId, inQ);
     }
 
     public Token getToken(Long tokenId) {

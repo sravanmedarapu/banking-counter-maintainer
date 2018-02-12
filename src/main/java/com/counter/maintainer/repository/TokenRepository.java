@@ -1,11 +1,10 @@
 package com.counter.maintainer.repository;
 
 import com.counter.maintainer.data.contracts.ServicePriority;
-import com.counter.maintainer.data.contracts.ServiceType;
+import com.counter.maintainer.data.contracts.TokenType;
 import com.counter.maintainer.data.contracts.Token;
 import com.counter.maintainer.data.contracts.TokenStatus;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -29,7 +28,7 @@ public class TokenRepository {
 
 
     public Token createToken(Token token) {
-        String createQuery = "insert into token set customerId=?1, serviceID=(select serviceId from serviceTypes where name=?2)";
+        String createQuery = "insert into token set customerId=?1, servicePriority=?2, serviceID=(select serviceId from serviceTypes where name=?3)";
         KeyHolder idHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(new PreparedStatementCreator() {
             @Override
@@ -39,7 +38,9 @@ public class TokenRepository {
                                                                    new String[]{"id"});
 
                 ps.setString(1, String.valueOf(token.getCustomerId()));
-                ps.setString(2, String.valueOf(token.getServiceType()));
+                ps.setString(2, token.getServicePriority().name());
+                ps.setString(3, String.valueOf(token.getTokenType()));
+
                 return ps;
             }
         }, idHolder);
@@ -57,24 +58,29 @@ public class TokenRepository {
 
     @Transactional(readOnly=true)
     public Token getToken(long tokenId) {
-        String query = "select t.tokenId, t.customerId, t.inQ, t.comments, t.actionItems, "
+        String query = "select t.tokenId, t.customerId, t.servicePriority, t.inQ, t.comments, t.actionItems, "
                            + "t.status, c.counterId, st.name from token as t  "
-                           + "inner join counterStatus as c on t.tokenId=c.tokenId "
-                           + "inner join serviceTypes as st on t.serviceID=st.serviceID "
+                           + "left join counterStatus as c on t.tokenId=c.tokenId "
+                           + "left join serviceTypes as st on t.serviceID=st.serviceID "
                            + "where t.tokenId =?";
 
         return jdbcTemplate.queryForObject(query, new Object[]{tokenId}, new TokenRowMapper());
     }
 
 
-    @Query(value="update token set counterId=?2 where tokenId=?1", nativeQuery = true)
-    public void updateCounter(Long tokenId, Long counterId) {
+    @Query(value="update counterStatus set counterId=?2 where tokenId=?1", nativeQuery = true)
+    public void updateCounter(Long tokenId, Long counterId, Boolean inQ) {
+        if(inQ != true) {
+            // existing entry
+            jdbcTemplate.update("update counterStatus set counterId=?2, inQ=?3 where tokenId=?1", new Object[] { tokenId, counterId, inQ });
+        } else {
+            jdbcTemplate.update("insert into counterStatus(tokenId, counterId, inQ) values(?1,?2, ?3)", new Object[] { tokenId, counterId, inQ });
+        }
 
     }
 
-    @Query(value="update token set status=?2, inQ=?3 where tokenId=?1", nativeQuery = true)
     public void updateTokenStatus(Long tokenId, TokenStatus status, boolean inQ){
-
+        jdbcTemplate.update("update token set status=?2, inQ=?3 where tokenId=?1", new Object[]{tokenId, status.name(), inQ });
     }
 
 }
@@ -87,12 +93,14 @@ class TokenRowMapper implements RowMapper<Token>
         Token token = new Token();
         token.setTokenId(rs.getLong("tokenId"));
         token.setCustomerId(rs.getLong("customerId"));
-        ServiceType serviceName = ServiceType.valueOf(rs.getString("serviceName"));
         token.setInQ(rs.getBoolean("inQ"));
         token.setStatus(TokenStatus.valueOf(rs.getString("status")));
-        //token.setServicePriority();
+        token.setComments(rs.getString("comments"));
+        token.setActionItems(rs.getString("actionItems"));
+        token.setTokenType(TokenType.valueOf(rs.getString("name")));
+        token.setServicePriority(ServicePriority.valueOf(rs.getString("servicePriority")));
+        token.setCounterId(rs.getLong("counterId"));
 
-       // ServiceType serviceType = ServiceType.valueOf(serviceName);
         return token;
     }
 }

@@ -2,6 +2,8 @@ package com.counter.maintainer.controller;
 
 import java.util.List;
 
+import com.counter.maintainer.data.contracts.CounterDetails;
+import com.counter.maintainer.service.CounterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,25 +16,15 @@ import com.counter.maintainer.service.CustomerService;
 public class CounterController {
 
 	@Autowired
-	private CustomerService customerService;
+	private CounterService counterService;
 
 	@RequestMapping("/counter/status")
-	public List<Long> getCounterStatus() {
-		//TODO: yet to implement
-		return null;
+	public List<CounterDetails> getCounterStatus() {
+
+		return counterService.getCounterStatus();
 
 	}
 
-	@RequestMapping(method=RequestMethod.GET, value="/counter/status")
-	public String getStatus() {
-		//TODO: yet to implement
-		return null;
-	}
-
-	public void createCustomer(Customer customer) {
-		customerService.createCustomer(customer);
-	}
-	
 	
 
 }

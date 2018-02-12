@@ -4,7 +4,6 @@ import com.counter.maintainer.data.contracts.*;
 import com.counter.maintainer.exceptions.CountersNotAvailableException;
 import com.counter.maintainer.repository.CounterRepository;
 import com.counter.maintainer.repository.EmployeeRepository;
-import com.counter.maintainer.repository.TokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -14,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.counter.maintainer.data.contracts.ServiceType.*;
 
 @Component
 public class CounterManagerImpl implements CounterManager {
@@ -27,7 +28,7 @@ public class CounterManagerImpl implements CounterManager {
     private CounterRepository counterRepository;
 
     @Autowired
-    private TokenRepository tokenRepository;
+    private TokenService tokenService;
 
     @Autowired
     private EmployeeRepository employeeRepository;
@@ -42,8 +43,10 @@ public class CounterManagerImpl implements CounterManager {
             throw new RuntimeException("CounterDetails not available exception");
         }
         for(CounterDetails counterDetails: counterDetailsList) {
+            List<ServiceType> serviceTypes = getServiceTypeList(employeeList.get(0));
             //TODO: update to fetch and empId and counterType
-            CounterDesk counterDesk = new CounterDesk(counterService, counterDetails, employeeList.get(0).getEmployeeId(), CounterType.BOTH);
+            CounterDesk counterDesk = new CounterDesk(counterService, counterDetails, employeeList.get(0).getEmployeeId(), CounterType.BOTH,
+                                                      serviceTypes);
             counterDesk.start();
             counterList.add(counterDesk);
         }
@@ -56,11 +59,11 @@ public class CounterManagerImpl implements CounterManager {
 
     @Override
     public List<CounterDetails> getCounterStatus() {
-        return counterRepository.getAvailableCounters();
+        return counterService.getCounterStatus();
     }
 
     private Token assignToken(Token token) {
-        List<CounterDesk> counterDesks = getAvailableCounterDesks(token.getServicePriority());
+        List<CounterDesk> counterDesks = getAvailableCounterDesks(token);
         if(counterDesks.isEmpty()) {
             throw new CountersNotAvailableException();
         }
@@ -79,22 +82,40 @@ public class CounterManagerImpl implements CounterManager {
             }
             minCounterDesk.addTokenToQueue(token);
             token.setCounterId(minCounterDesk.getCounterId());
+        tokenService.updateCounter(token.getTokenId(), token.getCounterId(), true/*inQ*/);
 
         return token;
 
     }
 
-    private List<CounterDesk> getAvailableCounterDesks( ServicePriority servicePriority) {
-        if(servicePriority == ServicePriority.PREMIUM) {
+    private List<CounterDesk> getAvailableCounterDesks( Token token) {
+        if(token.getServicePriority() == ServicePriority.PREMIUM) {
             return counterList.stream().filter(counterDesk ->
                           counterDesk.getCounterType() == CounterType.BOTH
                               || counterDesk.getCounterType() == CounterType.PREMIUM
-            ).collect(Collectors.toList());
+            ).filter(counterDesk -> {
+                         return counterDesk.getServiceTypes().contains(token.getNextServiceType());
+                     }).collect(Collectors.toList());
         } else {
             return counterList.stream().filter(counterDesk ->
                           counterDesk.getCounterType() == CounterType.BOTH
                               || counterDesk.getCounterType() == CounterType.REGULAR
-            ).collect(Collectors.toList());
+            ).filter(counterDesk -> {
+                return counterDesk.getServiceTypes().contains(token.getNextServiceType());
+            }).collect(Collectors.toList());
         }
+    }
+
+    public List<ServiceType> getServiceTypeList(Employee e) {
+        EmployeeRole role = e.getRole();
+        switch (role) {
+        case MANAGER:
+            return Arrays.asList(MANAGER_APPROVAL, VERIFICATION);
+        case OPERATOR:
+            return Arrays.asList(WITHDRAW, DEPOSIT, CHECK_DEPOSIT, VERIFICATION);
+        default:
+            throw new RuntimeException("Unknown EmployeeRole :" + role.name());
+        }
+
     }
 }

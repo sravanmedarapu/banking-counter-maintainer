@@ -1,56 +1,29 @@
 package com.counter.maintainer.data.contracts;
 
-import java.util.PriorityQueue;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.joda.time.DateTime;
 
 import javax.persistence.*;
-/*
-@Entity
-@Table(name = "token")*/
+
 public class Token implements Comparable<Token> {
-	/*@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name="tokenId")*/
 	private Long tokenId;
-
-	//@Column(name="servicePriority")
 	private ServicePriority servicePriority;
-
-	//@Column(name="customerId")
 	private Long customerId;
-
-	//@Transient
 	private Customer customer;
-
-	//@Column(name="comments")
 	private String comments;
-
-	//@Column(name="actionItems")
 	private String actionItems;
-
-	//@Column(name="status")
 	private TokenStatus status;
-
-	//@Column(name="createdDate")
 	@JsonIgnore
 	private DateTime createdDate;
-
 	private Boolean inQ;
-
-
 	@JsonIgnore
 	private Long approxTime;
-
 	private Long counterId;
 
-	@Transient
 	@JsonIgnore
 	private DateTime counterAddedTime;
 
-	//@Column(name="serviceType")
-	private ServiceType serviceType;
+	private TokenType tokenType;
 	
 	public Long getTokenId() {
 		return tokenId;
@@ -112,13 +85,16 @@ public class Token implements Comparable<Token> {
 	public void setCounterId(long counterId) {
 		this.counterId = counterId;
 	}
-	public ServiceType getServiceType() {
-		return serviceType;
+	public TokenType getTokenType() {
+		return tokenType;
 	}
-	public void setServiceType(ServiceType serviceType) {
-		this.serviceType = serviceType;
+	public void setTokenType(TokenType tokenType) {
+		this.tokenType = tokenType;
 	}
 
+	public ServiceType getNextServiceType() {
+		return (ServiceType) tokenType.getActionTimes().peek();
+	}
 
 	public Boolean getInQ() {
 		return inQ;
@@ -139,25 +115,23 @@ public class Token implements Comparable<Token> {
 		Token token = new Token();
 		token.setServicePriority(ServicePriority.PREMIUM);
 		token.setCreatedDate(DateTime.now());
-		token.setServiceType(ServiceType.DEPOSIT);
+		token.setTokenType(TokenType.DEPOSIT);
 		return token;
 	}
 	
-	public static Token getToken(ServicePriority servicePriority, DateTime dateTime, ServiceType reqServiceType) {
+	public static Token getToken(ServicePriority servicePriority, DateTime dateTime, TokenType reqTokenType) {
 		Token token = new Token();
 		token.setServicePriority(servicePriority);
 		token.setCreatedDate(dateTime);
-		token.setServiceType(reqServiceType);
+		token.setTokenType(reqTokenType);
 		return token;
 	}
 	public int compareTo(Token token) {
-		if(this.counterAddedTime.isBefore(token.counterAddedTime)) {
+		if (this.counterAddedTime.isBefore(token.counterAddedTime)) {
 			return -1;
 		} else {
 			return 1;
 		}
-
-		//return this.counterAddedTime.compareTo(token.getCounterAddedTime());
 	}
 
 	public DateTime getCounterAddedTime() {

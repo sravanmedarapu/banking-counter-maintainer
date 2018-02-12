@@ -20,8 +20,8 @@ CREATE TABLE IF NOT EXISTS  address (
     FOREIGN KEY (customerId) REFERENCES customer(customerId)
 );
 
-DROP TABLE IF EXISTS serviceTypes;
-CREATE TABLE IF NOT EXISTS serviceTypes (
+DROP TABLE IF EXISTS ServiceTypes;
+CREATE TABLE IF NOT EXISTS ServiceTypes (
     serviceId int auto_increment NOT NULL,
     name varchar(128) not null,
     avgTimeINMIN int(10) not null,
@@ -37,9 +37,10 @@ CREATE TABLE IF NOT EXISTS  token (
     comments varchar(256),
     actionItems varchar(256),
     status varchar(128),
+    servicePriority varchar(128),
     PRIMARY KEY (tokenId),
     FOREIGN KEY (customerId) REFERENCES customer(customerId),
-    FOREIGN KEY (serviceID) REFERENCES serviceTypes(serviceID)
+    FOREIGN KEY (serviceID) REFERENCES ServiceTypes(serviceID)
 );
 
 DROP TABLE IF EXISTS employee;
@@ -56,14 +57,14 @@ CREATE TABLE IF NOT EXISTS counterServices (
     serviceID int not null,
     active BOOLEAN DEFAULT FALSE,
     PRIMARY KEY (id),
-    FOREIGN KEY (serviceID) REFERENCES serviceTypes(serviceID)
+    FOREIGN KEY (serviceID) REFERENCES ServiceTypes(serviceID)
 );
 
 DROP TABLE IF EXISTS counterStatus;
 CREATE TABLE IF NOT EXISTS  counterStatus (
     tokenId int NOT NULL,
     counterId int NOT NULL,
-    waitTimeInMin int not null,
+    waitTimeInMin int,
     inQ BOOLEAN DEFAULT TRUE,
     active BOOLEAN DEFAULT TRUE,
     FOREIGN KEY (tokenId) REFERENCES token(tokenId)

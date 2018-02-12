@@ -6,7 +6,7 @@ public class CounterDetails {
 
 	private long counterId;
 
-	private List<ServiceType> serviceTypes;
+	private List<TokenType> tokenTypes;
 
 	private List<Long> tokenIdList;
 
@@ -22,13 +22,13 @@ public class CounterDetails {
 	}
 
 
-	public List<ServiceType> getServiceTypes() {
-		return serviceTypes;
+	public List<TokenType> getTokenTypes() {
+		return tokenTypes;
 	}
 
 
-	public void setServiceTypes(List<ServiceType> serviceTypes) {
-		this.serviceTypes = serviceTypes;
+	public void setTokenTypes(List<TokenType> tokenTypes) {
+		this.tokenTypes = tokenTypes;
 	}
 
 	public Boolean getActive() {

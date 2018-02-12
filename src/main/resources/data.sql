@@ -1,5 +1,5 @@
 
-insert into serviceTypes (name, avgTimeInMin) values ('WITHDRAW',5), ('DEPOSIT',5), ('CHECK_DEPOSIT',10), ('ACCOUNT_CLOSE',5);
+insert into ServiceTypes (name, avgTimeInMin) values ('WITHDRAW',5), ('DEPOSIT',5), ('CHECK_DEPOSIT',10), ('ACCOUNT_CLOSE',5);
 
 
 insert into counterServices(counterId, serviceID, active) values (1,1,'TRUE'), (1,2,'TRUE'),(1,3,'TRUE'),(2,4,'TRUE'),(3,1,'TRUE');

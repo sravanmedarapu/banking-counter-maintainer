@@ -1,41 +1,23 @@
 package com.counter.maintainer.data.contracts;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-import org.springframework.boot.autoconfigure.domain.EntityScan;
-
-
 public class Address {
-	/*@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "id")*/
 	private String id;
 	
-	//@Column(name = "streeName")
-	private String streeName;
+	private String streetName;
 	
-	//@Column(name = "city")
 	private String city;
 	
-	//@Column(name = "state")
 	private String state;
 	
-	//@Column(name = "country")
 	private String country;
 	
-	//@Column(name = "zipCode")
 	private String zipCode;
 	
-	public String getStreeName() {
-		return streeName;
+	public String getStreetName() {
+		return streetName;
 	}
-	public void setStreeName(String streeName) {
-		this.streeName = streeName;
+	public void setStreetName(String streetName) {
+		this.streetName = streetName;
 	}
 	public String getCity() {
 		return city;
