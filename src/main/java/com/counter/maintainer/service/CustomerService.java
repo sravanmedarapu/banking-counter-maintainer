@@ -11,15 +11,11 @@ import com.counter.maintainer.data.contracts.Customer;
 import com.counter.maintainer.repository.CustomerRepository;
 
 @Component
-public class CustomerService {
+public interface CustomerService {
 	
-	@Autowired
-	CustomerRepository customerRepository;
+	Boolean isCustomerExist(Long customerId);
 
 	@Transactional
-	public Customer createCustomer(Customer customer) {
-		Customer customerCreated = customerRepository.save(customer);
-		return customerCreated;
-	}
+	Customer createCustomer(Customer customer);
 
 }

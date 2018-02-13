@@ -30,7 +30,7 @@ public class CustomerRepositoryImpl implements CustomerRepository{
 			@Override
 			public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
 
-				PreparedStatement ps = connection.prepareStatement("insert into customer  (name, phoneNumber) values (?1, ?2)",
+				PreparedStatement ps = connection.prepareStatement("insert into customer (name, phoneNumber) values (?1, ?2)",
 																   new String[]{"id"});
 
 				ps.setString(1, customer.getName());
@@ -47,6 +47,16 @@ public class CustomerRepositoryImpl implements CustomerRepository{
 								customer.getCustomerId(), address.getCity(), address.getState(), address.getCountry(), address.getZipCode());
 		}
 		return customer;
+	}
+
+	public Boolean isCustomerExist(Long customerId) {
+		Long count = jdbcTemplate.queryForObject("select count(*) from customer where customerId=?1", new Object[]{customerId}, Long.class);
+		if(count == 0) {
+			return false;
+		} else {
+			return false;
+		}
+
 	}
 
 }

@@ -1,6 +1,7 @@
 package com.counter.maintainer.data.contracts;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.joda.time.DateTime;
 
 import java.util.Queue;
@@ -9,11 +10,14 @@ public class Token implements Comparable<Token> {
 	private Long tokenId;
 	private ServicePriority servicePriority;
 	private Long customerId;
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private Customer customer;
+	@JsonIgnore
 	private String comments;
 	private TokenStatus status;
 	@JsonIgnore
 	private DateTime createdDate;
+	@JsonIgnore
 	private Boolean inQ;
 	@JsonIgnore
 	private Long approxTime;

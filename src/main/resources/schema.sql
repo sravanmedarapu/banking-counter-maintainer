@@ -1,43 +1,41 @@
-DROP TABLE IF EXISTS Address;
-CREATE TABLE IF NOT EXISTS Address (
-    addressId int auto_increment NOT NULL,
-    city varchar(128),
-    state varchar(128),
-    country varchar(128),
-    zipcode varchar(10),
-    PRIMARY KEY (addressId)
-);
-
 DROP TABLE IF EXISTS Customer;
 CREATE TABLE IF NOT EXISTS Customer(
     customerId INT auto_increment NOT NULL,
     name varchar(128) NOT NULL,
     phoneNumber varchar(10),
-    addressId INT NOT NULL,
     PRIMARY KEY (customerId),
-    FOREIGN KEY (addressId) REFERENCES Address(addressId)
 );
 
-DROP TABLE IF EXISTS ServiceTypes;
-CREATE TABLE IF NOT EXISTS ServiceTypes (
-    serviceId int auto_increment NOT NULL,
+DROP TABLE IF EXISTS Address;
+CREATE TABLE IF NOT EXISTS Address (
+    addressId int auto_increment NOT NULL,
+    customerId int NOT NULL ,
+    city varchar(128),
+    state varchar(128),
+    country varchar(128),
+    zipcode varchar(10),
+    PRIMARY KEY (addressId, customerId),
+    FOREIGN KEY (customerId) REFERENCES Customer(customerId)
+);
+
+DROP TABLE IF EXISTS TokenType;
+CREATE TABLE IF NOT EXISTS TokenType (
+    tokenTypeId int auto_increment NOT NULL,
     name varchar(128) not null,
-    PRIMARY KEY (serviceId)
+    PRIMARY KEY (tokenTypeId)
 );
 
 DROP TABLE IF EXISTS Token;
 CREATE TABLE IF NOT EXISTS  Token (
     tokenId int auto_increment NOT NULL,
     customerId int NOT NULL,
-    serviceID int not null,
-    inQ BOOLEAN DEFAULT TRUE,
+    tokenTypeId int not null,
     comments varchar(512) DEFAULT '',
-    actionItems varchar(256),
     status varchar(128),
-    servicePriority varchar(128),
+    tokenPriority varchar(128) not null default 'REGULAR',
     PRIMARY KEY (tokenId),
     FOREIGN KEY (customerId) REFERENCES Customer(customerId),
-    FOREIGN KEY (serviceID) REFERENCES ServiceTypes(serviceID)
+    FOREIGN KEY (tokenTypeId) REFERENCES TokenType(tokenTypeId)
 );
 
 DROP TABLE IF EXISTS Employee;
@@ -52,13 +50,40 @@ DROP TABLE IF EXISTS Counter;
 CREATE TABLE IF NOT EXISTS Counter (
     id int auto_increment NOT NULL,
     counterId int NOT NULL,
-    serviceID int not null,
-    active BOOLEAN DEFAULT FALSE,
+    active BOOLEAN DEFAULT TRUE,
     employeeId int NOT NULL,
     counterType varchar(128) not null,
-    PRIMARY KEY (id, employeeId),
-    FOREIGN KEY (serviceID) REFERENCES ServiceTypes(serviceID),
+    CONSTRAINT PK_COUNTER PRIMARY KEY (id, counterId, employeeId, active),
     FOREIGN KEY (employeeId) REFERENCES Employee(employeeId)
+);
+
+DROP TABLE IF EXISTS Service;
+CREATE TABLE IF NOT EXISTS Service (
+    serviceId int auto_increment NOT NULL,
+    serviceName VARCHAR (128) not null,
+    PRIMARY KEY (serviceId),
+);
+
+
+DROP TABLE IF EXISTS CounterService;
+CREATE TABLE IF NOT EXISTS CounterService (
+    id int auto_increment NOT NULL,
+    counterId int NOT NULL,
+    serviceId int NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (counterId) REFERENCES Counter(counterId),
+    FOREIGN KEY (serviceId) REFERENCES Service(serviceId)
+);
+
+DROP TABLE IF EXISTS TokenSubTasks;
+CREATE TABLE IF NOT EXISTS TokenSubTasks(
+  id INT auto_increment NOT  NULL,
+  tokenTypeId INT NOT NULL,
+  serviceId int NOT NULL,
+  FOREIGN KEY (serviceId) REFERENCES Service(serviceId),
+  FOREIGN KEY (tokenTypeId) REFERENCES TokenType(tokenTypeId),
+  PRIMARY KEY (id)
+
 );
 
 DROP TABLE IF EXISTS TokenStatus;
@@ -68,5 +93,6 @@ CREATE TABLE IF NOT EXISTS  TokenStatus (
     counterId int NOT NULL,
     inQ BOOLEAN DEFAULT TRUE,
     PRIMARY KEY (id),
-    FOREIGN KEY (tokenId) REFERENCES Token(tokenId)
+    FOREIGN KEY (tokenId) REFERENCES Token(tokenId),
+    FOREIGN KEY (counterId) REFERENCES Counter(counterId)
 );

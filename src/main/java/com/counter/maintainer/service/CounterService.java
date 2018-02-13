@@ -8,7 +8,6 @@ import com.counter.maintainer.data.contracts.TokenStatus;
 import java.util.List;
 
 public interface CounterService {
-    List<CounterDetails> getAvailableCounters(TokenType tokenType);
 
     Token serveToken(Token token, CounterDesk counterDesk);
 

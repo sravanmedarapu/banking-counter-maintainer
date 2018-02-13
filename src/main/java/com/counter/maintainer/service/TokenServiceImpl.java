@@ -28,7 +28,7 @@ public class TokenServiceImpl implements TokenService{
 
     @Transactional
     public Token createToken(Token token) {
-        if (token.getCustomerId() == null) {
+        if (token.getCustomerId() == null || customerService.isCustomerExist(token.getCustomerId())) {
             Customer customer = customerService.createCustomer(token.getCustomer());
             token.setCustomer(customer);
             token.setCustomerId(customer.getCustomerId());
@@ -38,13 +38,18 @@ public class TokenServiceImpl implements TokenService{
         return counterManager.assignTokenToCounter(createdToken);
     }
 
-    public void updateTokenStatus(Long tokenId, TokenStatus status, Boolean inQ) {
-        tokenRepository.updateTokenStatus(tokenId, status, inQ);
+    public void updateTokenStatus(Long tokenId, TokenStatus status) {
+        tokenRepository.updateTokenStatus(tokenId, status);
     }
 
     @Override
-    public void updateCounter(Long tokenId, Long counterId, Boolean inQ) {
-        tokenRepository.updateCounter(tokenId, counterId, inQ);
+    public void updateCounter(Long tokenId, Long counterId) {
+        tokenRepository.updateCounter(tokenId, counterId);
+    }
+
+    @Override
+    public void addTokenToCounter(Long tokenId, Long counterId) {
+        tokenRepository.addTokenToCounter(tokenId, counterId);
     }
 
     @Override
@@ -53,6 +58,13 @@ public class TokenServiceImpl implements TokenService{
         return tokenRepository.getToken(tokenId);
     }
 
+
+    @Override
+    public void updateTokenQueueStatus(Long tokenId, Long counterId, Boolean inQ) {
+        tokenRepository.updateTokenQueueStatus(tokenId, counterId, inQ);
+    }
+
+    @Override
     public Token getToken(Long tokenId) {
         if (tokenId <= 0) {
             throw new InvalidTokenException("Invalid tokenId:" + tokenId);

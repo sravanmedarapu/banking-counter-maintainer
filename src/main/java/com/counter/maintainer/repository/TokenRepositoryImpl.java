@@ -29,7 +29,7 @@ public class TokenRepositoryImpl implements TokenRepository {
 
 
     public Token createToken(Token token) {
-        String createQuery = "insert into token set customerId=?1, servicePriority=?2, serviceID=(select serviceId from serviceTypes where name=?3)";
+        String createQuery = "insert into token set customerId=?1, tokenPriority=?2, tokenTypeId=(select tokenTypeId from TokenType where name=?3)";
         KeyHolder idHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(new PreparedStatementCreator() {
             @Override
@@ -54,10 +54,10 @@ public class TokenRepositoryImpl implements TokenRepository {
 
     @Transactional(readOnly=true)
     public Token getToken(long tokenId) {
-        String query = "select t.tokenId, t.customerId, t.servicePriority, t.inQ, t.comments, t.actionItems, "
-                           + "t.status, c.counterId, st.name from token as t  "
-                           + "left join counterStatus as c on t.tokenId=c.tokenId "
-                           + "left join serviceTypes as st on t.serviceID=st.serviceID "
+        String query = "select t.tokenId, t.customerId, t.tokenPriority, t.comments, "
+                           + "t.status, c.counterId, tt.name from token as t  "
+                           + "left join TokenStatus as c on t.tokenId=c.tokenId "
+                           + "left join TokenType as tt on t.tokenTypeId=tt.tokenTypeId "
                            + "where t.tokenId =?";
 
         List<Token> tokenList = jdbcTemplate.query(query, new Object[]{tokenId}, new TokenRowMapper());
@@ -68,22 +68,27 @@ public class TokenRepositoryImpl implements TokenRepository {
     }
 
 
-    public void updateCounter(Long tokenId, Long counterId, Boolean inQ) {
-        if(inQ != true) {
-            // existing entry
-            jdbcTemplate.update("update counterStatus set counterId=?2, inQ=?3 where tokenId=?1", new Object[] { tokenId, counterId, inQ });
-        } else {
-            jdbcTemplate.update("insert into counterStatus(tokenId, counterId, inQ) values(?1,?2, ?3)", new Object[] { tokenId, counterId, inQ });
-        }
+    public void updateCounter(Long tokenId, Long counterId) {
 
+        jdbcTemplate.update("update TokenStatus set counterId=?2 where tokenId=?1", new Object[] { tokenId, counterId });
+
+    }
+
+    public void addTokenToCounter(Long tokenId, Long counterId) {
+        jdbcTemplate.update("insert into TokenStatus(tokenId, counterId) values(?1,?2)", new Object[] { tokenId, counterId });
     }
 
     public void updateTokenComments(Long tokenId, String comment) {
         jdbcTemplate.update("update token set comments = CONCAT(comments, ' ; ', ?2) where tokenId=?1", new Object[] { tokenId, comment });
     }
 
-    public void updateTokenStatus(Long tokenId, TokenStatus status, boolean inQ){
-        jdbcTemplate.update("update token set status=?2, inQ=?3 where tokenId=?1", new Object[]{tokenId, status.name(), inQ });
+    public void updateTokenStatus(Long tokenId, TokenStatus status){
+        jdbcTemplate.update("update token set status=?2 where tokenId=?1", new Object[]{tokenId, status.name() });
+    }
+
+    public void updateTokenQueueStatus(Long tokenId, Long counterId, Boolean inQ) {
+        jdbcTemplate.update("update TokenStatus set inQ=?3 where tokenId=?1 and counterId=?2", new Object[]{tokenId, counterId,inQ });
+
     }
 
 }
@@ -96,11 +101,10 @@ class TokenRowMapper implements RowMapper<Token>
         Token token = new Token();
         token.setTokenId(rs.getLong("tokenId"));
         token.setCustomerId(rs.getLong("customerId"));
-        token.setInQ(rs.getBoolean("inQ"));
         token.setStatus(TokenStatus.valueOf(rs.getString("status")));
         token.setComments(rs.getString("comments"));
         token.setTokenType(TokenType.valueOf(rs.getString("name")));
-        token.setServicePriority(ServicePriority.valueOf(rs.getString("servicePriority")));
+        token.setServicePriority(ServicePriority.valueOf(rs.getString("tokenPriority")));
         token.setCounterId(rs.getLong("counterId"));
 
         return token;
