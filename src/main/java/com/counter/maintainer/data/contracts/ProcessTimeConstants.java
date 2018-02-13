@@ -1,4 +1,4 @@
-package com.counter.maintainer.service;
+package com.counter.maintainer.data.contracts;
 
 public class ProcessTimeConstants {
 

@@ -9,10 +9,14 @@ public interface TokenService {
 
     Token getToken(Long tokenId);
 
-    void updateTokenStatus(Long tokenId, TokenStatus status, Boolean inQ);
+    void updateTokenStatus(Long tokenId, TokenStatus status);
 
-    void updateCounter(Long tokenId, Long counterId, Boolean inQ );
+    void updateCounter(Long tokenId, Long counterId);
+
+    void addTokenToCounter(Long tokenId, Long counterId);
 
     Token updateTokenComments(Long tokenId, String comment);
+
+    void updateTokenQueueStatus(Long tokenId, Long counterId, Boolean inQ);
 
 }

@@ -12,7 +12,7 @@ public enum TokenType {
 		}
 
 		public Queue<Enum> getActionTimes() {
-			return new LinkedList<>(Arrays.asList(ServiceType.VERIFICATION, ServiceType.WITHDRAW));
+			return new LinkedList<>(Arrays.asList(ServiceType.ACC_VERIFICATION, ServiceType.CASH_WITHDRAW));
 		}
 
 	}, DEPOSIT {
@@ -20,28 +20,28 @@ public enum TokenType {
 			return 5;
 		}
 		public Queue<Enum> getActionTimes() {
-			return new LinkedList<Enum>(Arrays.asList(ServiceType.VERIFICATION, ServiceType.WITHDRAW));
+			return new LinkedList<Enum>(Arrays.asList(ServiceType.ACC_VERIFICATION, ServiceType.CASH_WITHDRAW));
 		}
 	}, CHECK_DEPOSIT {
 		public int getWaitTimeInMins() {
 			return 10;
 		}
 		public Queue<Enum> getActionTimes() {
-			return new LinkedList<>(Arrays.asList(ServiceType.VERIFICATION, ServiceType.CHECK_DEPOSIT));
+			return new LinkedList<>(Arrays.asList(ServiceType.ACC_VERIFICATION, ServiceType.CHECK_DEPOSIT));
 		}
 	}, ACCOUNT_CLOSE {
 		public int getWaitTimeInMins() {
 			return 15;
 		}
 		public Queue<Enum> getActionTimes() {
-			return new LinkedList<Enum>(Arrays.asList(ServiceType.VERIFICATION, ServiceType.MANAGER_APPROVAL, ServiceType.ACCOUNT_CLOSE));
+			return new LinkedList<Enum>(Arrays.asList(ServiceType.ACC_VERIFICATION, ServiceType.MANAGER_APPROVAL, ServiceType.ACC_CLOSE));
 		}
 	}, ACCOUNT_OPEN {
 		public int getWaitTimeInMins() {
 			return 15;
 		}
 		public Queue<Enum> getActionTimes() {
-			return new LinkedList<>(Arrays.asList(ServiceType.VERIFICATION, ServiceType.MANAGER_APPROVAL, ServiceType.ACCOUNT_OPEN));
+			return new LinkedList<>(Arrays.asList(ServiceType.DOC_VERIFICATION, ServiceType.MANAGER_APPROVAL, ServiceType.ACC_OPEN));
 		}
 	};
 

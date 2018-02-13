@@ -10,9 +10,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.counter.maintainer.service.ProcessTimeConstants.CHECK_DEPOSIT_TIME_SEC;
-import static com.counter.maintainer.service.ProcessTimeConstants.MANAGER_APPROVAL_TIME_IN_SEC;
-import static com.counter.maintainer.service.ProcessTimeConstants.WITHDRAW_TIME_IN_SEC;
+import static com.counter.maintainer.data.contracts.ProcessTimeConstants.CHECK_DEPOSIT_TIME_SEC;
+import static com.counter.maintainer.data.contracts.ProcessTimeConstants.MANAGER_APPROVAL_TIME_IN_SEC;
+import static com.counter.maintainer.data.contracts.ProcessTimeConstants.WITHDRAW_TIME_IN_SEC;
 
 @Service
 public class CounterServiceImpl implements CounterService {
@@ -28,9 +28,6 @@ public class CounterServiceImpl implements CounterService {
 
     private static final Logger logger = LoggerFactory.getLogger(CounterServiceImpl.class);
 
-    public List<CounterDetails> getAvailableCounters(TokenType tokenType) {
-       return counterRepository.getAvailableCounters(tokenType);
-    }
 
     @Override
     public Token serveToken(Token token, CounterDesk counterDesk) {
@@ -45,7 +42,6 @@ public class CounterServiceImpl implements CounterService {
             processRequest((ServiceType)serviceType);
         }
         if(token.getActionItems().size() > 0) {
-
             token = counterManager.assignTokenToCounter(token);
             updateTokenComments(token.getTokenId(), "Redirecting to counter Id:"+ token.getCounterId());
         } else {
@@ -53,6 +49,7 @@ public class CounterServiceImpl implements CounterService {
             updateTokenStatus(token.getTokenId(), TokenStatus.COMPLETED, counterDesk.getEmpId());
             updateTokenComments(token.getTokenId(), "Completed processing token at counter id:"+ token.getCounterId());
         }
+        tokenService.updateTokenQueueStatus(token.getTokenId(), counterDesk.getCounterId(), false/*inQ*/);
         return token;
     }
 
@@ -61,13 +58,13 @@ public class CounterServiceImpl implements CounterService {
         if(tokenStatus == TokenStatus.COMPLETED || tokenStatus == TokenStatus.CANCELLED) {
             EmployeeRole role = employeeService.getEmployeeRole(emplId);
             if(role == EmployeeRole.MANAGER || role == EmployeeRole.OPERATOR) {
-                tokenService.updateTokenStatus(tokenId, tokenStatus, false);
+                tokenService.updateTokenStatus(tokenId, tokenStatus);
                 } else {
                 throw new InsufficientPrivilegesException("Only MANAGER or OPERATOR have privileges to " + tokenStatus.name() + " the token");
             }
 
         } else {
-            tokenService.updateTokenStatus(tokenId, tokenStatus, true);
+            tokenService.updateTokenStatus(tokenId, tokenStatus);
         }
         return true;
     }
@@ -83,9 +80,13 @@ public class CounterServiceImpl implements CounterService {
 
     private void processRequest(ServiceType serviceType) {
         switch (serviceType) {
-        case VERIFICATION:
-        case WITHDRAW:
-        case DEPOSIT:
+        case ACC_VERIFICATION:
+        case BALANCE_ENQUIRY:
+        case CASH_WITHDRAW:
+        case CASH_DEPOSIT:
+        case ACC_CLOSE:
+        case ACC_OPEN:
+        case DOC_VERIFICATION:
             //process the request
             logger.info("Processing {} request, will be completed in 1 min", serviceType.name());
             waitInSec(WITHDRAW_TIME_IN_SEC);

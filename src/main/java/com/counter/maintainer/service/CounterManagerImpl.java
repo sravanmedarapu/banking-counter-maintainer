@@ -78,13 +78,18 @@ public class CounterManagerImpl implements CounterManager {
                 }
             }
         }
-        minCounterDesk.addTokenToQueue(token);
-        token.setCounterId(minCounterDesk.getCounterId());
-        tokenService.updateCounter(token.getTokenId(), token.getCounterId(), true/*inQ*/);
-        token.setStatus(TokenStatus.QUEUED);
-        tokenService.updateTokenStatus(token.getTokenId(), TokenStatus.QUEUED, true/*inQ*/);
+
+        addTokenToCounterQueue(minCounterDesk, token);
+        tokenService.updateTokenStatus(token.getTokenId(), TokenStatus.QUEUED);
         return token;
 
+    }
+
+    private void addTokenToCounterQueue(CounterDesk counter, Token token) {
+        counter.addTokenToQueue(token);
+        token.setCounterId(counter.getCounterId());
+        tokenService.addTokenToCounter(token.getTokenId(), token.getCounterId());
+        token.setStatus(TokenStatus.QUEUED);
     }
 
     private List<CounterDesk> getAvailableCounterDesks( Token token) {
@@ -109,9 +114,9 @@ public class CounterManagerImpl implements CounterManager {
         EmployeeRole role = employeeRepository.getEmployeeRole(employeeId);
         switch (role) {
         case MANAGER:
-            return Arrays.asList(MANAGER_APPROVAL, VERIFICATION);
+            return Arrays.asList(ACC_VERIFICATION, BALANCE_ENQUIRY, ACC_CLOSE, ACC_OPEN, MANAGER_APPROVAL, DOC_VERIFICATION);
         case OPERATOR:
-            return Arrays.asList(WITHDRAW, DEPOSIT, CHECK_DEPOSIT, VERIFICATION);
+            return Arrays.asList(ACC_VERIFICATION,BALANCE_ENQUIRY,CASH_WITHDRAW,CASH_DEPOSIT,CHECK_DEPOSIT, DOC_VERIFICATION);
         default:
             throw new RuntimeException("Unknown EmployeeRole :" + role.name());
         }

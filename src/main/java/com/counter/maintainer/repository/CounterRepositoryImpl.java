@@ -2,6 +2,7 @@ package com.counter.maintainer.repository;
 
 import com.counter.maintainer.data.contracts.CounterDetails;
 import com.counter.maintainer.data.contracts.CounterType;
+import com.counter.maintainer.data.contracts.ServiceType;
 import com.counter.maintainer.data.contracts.TokenType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -21,53 +22,25 @@ public class CounterRepositoryImpl implements CounterRepository {
     private JdbcTemplate jdbcTemplate;
 
     @Transactional(readOnly=true)
-    public List<CounterDetails> getCountersStatus() {
-        List<CounterDetails> counterDetailsList = jdbcTemplate.query("select * from counterStatus where inQ='true'", new CounterRowMapper());
-        for(CounterDetails counterDetails : counterDetailsList) {
-            counterDetails.setTokenTypes(findCounterServices(counterDetails.getCounterId()));
-            counterDetails.setTokenIdList(findCounterTokens(counterDetails.getCounterId()));
-        }
-        return counterDetailsList;
-    }
-
-    @Transactional(readOnly=true)
-    public List<TokenType> findCounterServices(long counterId) {
-        return jdbcTemplate.query("select DISTINCT name from ServiceTypes where serviceId in "
-                                      + "(select serviceID from counterServices where counterId=? and active='true')", new Object[]{counterId}, new ServiceTypeRowMapper());
+    public List<ServiceType> findCounterServices(long counterId) {
+        return jdbcTemplate.query("select serviceName from Service where serviceId in "
+                                      + "(select serviceID from CounterService where counterId=?)", new Object[]{counterId}, new ServiceTypeRowMapper());
     }
 
     @Transactional(readOnly=true)
     public List<Long> findCounterTokens(long counterId) {
-        return jdbcTemplate.queryForList("select DISTINCT tokenId from counterStatus where counterId=? and inQ='true'", new Object[]{counterId}, Long.class);
-    }
-
-    @Transactional(readOnly=true)
-    public List<CounterDetails> getAvailableCounters(TokenType tokenType) {
-        List<CounterDetails> counterDetailsList = new ArrayList<CounterDetails>();
-
-        List<Long> counterIdList = jdbcTemplate.queryForList("select DISTINCT counterId from counterServices where serviceID in "
-                                      + "(select DISTINCT serviceId from serviceTypes where name=?) and active='true'", new Object[]{ tokenType.name()}, Long.class);
-
-        for(Long counterId: counterIdList) {
-            CounterDetails counterDetails = new CounterDetails();
-            counterDetails.setTokenIdList(this.findCounterTokens(counterId));
-            counterDetails.setActive(true);
-            counterDetails.setCounterId(counterId);
-            counterDetailsList.add(counterDetails);
-        }
-
-        return counterDetailsList;
+        return jdbcTemplate.queryForList("select DISTINCT tokenId from TokenStatus where counterId=? and inQ='true'", new Object[]{counterId}, Long.class);
     }
 
     @Transactional(readOnly=true)
     public List<CounterDetails> getAvailableCounters() {
         List<CounterDetails> counterDetailsList = new ArrayList<CounterDetails>();
 
-        List<CounterDetails> counterIdList = jdbcTemplate.query("select * from counterServices where active='true' and Id in (select max(id) from counterServices group by counterid)", new CounterDetailsRowMapper());
+        List<CounterDetails> counterIdList = jdbcTemplate.query("select * from Counter where active='true'", new CounterRowMapper());
 
         for(CounterDetails counterDetails: counterIdList) {
             counterDetails.setTokenIdList(findCounterTokens(counterDetails.getCounterId()));
-            counterDetails.setTokenTypes(findCounterServices(counterDetails.getCounterId()));
+            counterDetails.setServiceTypes(findCounterServices(counterDetails.getCounterId()));
             counterDetails.setActive(true);
             counterDetailsList.add(counterDetails);
         }
@@ -84,33 +57,20 @@ class  CounterRowMapper implements RowMapper<CounterDetails>
         CounterDetails counterDetails = new CounterDetails();
         counterDetails.setCounterId(rs.getInt("counterId"));
         counterDetails.setActive(rs.getBoolean("active"));
-        return counterDetails;
-    }
-}
-
-class  CounterDetailsRowMapper implements RowMapper<CounterDetails>
-{
-    @Override
-    public CounterDetails mapRow(ResultSet rs, int rowNum) throws SQLException
-    {
-        CounterDetails counterDetails = new CounterDetails();
-        counterDetails.setCounterId(rs.getInt("counterId"));
-        counterDetails.setActive(rs.getBoolean("active"));
-        counterDetails.setCounterId(rs.getLong("counterId"));
         counterDetails.setEmployeeId(rs.getLong("employeeId"));
         counterDetails.setCounterType(CounterType.valueOf(rs.getString("counterType")));
         return counterDetails;
     }
 }
 
-class ServiceTypeRowMapper implements RowMapper<TokenType>
+class ServiceTypeRowMapper implements RowMapper<ServiceType>
 {
     @Override
-    public TokenType mapRow(ResultSet rs, int rowNum) throws SQLException
+    public ServiceType mapRow(ResultSet rs, int rowNum) throws SQLException
     {
-        String serviceName = rs.getString("name");
+        String serviceName = rs.getString("serviceName");
 
-        TokenType tokenType = TokenType.valueOf(serviceName);
-        return tokenType;
+        ServiceType serviceType = ServiceType.valueOf(serviceName);
+        return serviceType;
     }
 }

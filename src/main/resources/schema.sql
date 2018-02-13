@@ -1,78 +1,98 @@
-
-DROP TABLE IF EXISTS customer;
-CREATE TABLE IF NOT EXISTS customer(
+DROP TABLE IF EXISTS Customer;
+CREATE TABLE IF NOT EXISTS Customer(
     customerId INT auto_increment NOT NULL,
     name varchar(128) NOT NULL,
     phoneNumber varchar(10),
-
-    PRIMARY KEY (customerId)
+    PRIMARY KEY (customerId),
 );
 
-DROP TABLE IF EXISTS address;
-CREATE TABLE IF NOT EXISTS  address (
-    id int auto_increment NOT NULL,
-    customerId int,
+DROP TABLE IF EXISTS Address;
+CREATE TABLE IF NOT EXISTS Address (
+    addressId int auto_increment NOT NULL,
+    customerId int NOT NULL ,
     city varchar(128),
     state varchar(128),
     country varchar(128),
     zipcode varchar(10),
-    PRIMARY KEY (id),
-    FOREIGN KEY (customerId) REFERENCES customer(customerId)
+    PRIMARY KEY (addressId, customerId),
+    FOREIGN KEY (customerId) REFERENCES Customer(customerId)
 );
 
-DROP TABLE IF EXISTS ServiceTypes;
-CREATE TABLE IF NOT EXISTS ServiceTypes (
-    serviceId int auto_increment NOT NULL,
+DROP TABLE IF EXISTS TokenType;
+CREATE TABLE IF NOT EXISTS TokenType (
+    tokenTypeId int auto_increment NOT NULL,
     name varchar(128) not null,
-    avgTimeINMIN int(10) not null,
-    PRIMARY KEY (name, serviceId)
+    PRIMARY KEY (tokenTypeId)
 );
 
-DROP TABLE IF EXISTS token;
-CREATE TABLE IF NOT EXISTS  token (
+DROP TABLE IF EXISTS Token;
+CREATE TABLE IF NOT EXISTS  Token (
     tokenId int auto_increment NOT NULL,
     customerId int NOT NULL,
-    serviceID int not null,
-    inQ BOOLEAN DEFAULT TRUE,
+    tokenTypeId int not null,
     comments varchar(512) DEFAULT '',
-    actionItems varchar(256),
     status varchar(128),
-    servicePriority varchar(128),
+    tokenPriority varchar(128) not null default 'REGULAR',
     PRIMARY KEY (tokenId),
-    FOREIGN KEY (customerId) REFERENCES customer(customerId),
-    FOREIGN KEY (serviceID) REFERENCES ServiceTypes(serviceID)
+    FOREIGN KEY (customerId) REFERENCES Customer(customerId),
+    FOREIGN KEY (tokenTypeId) REFERENCES TokenType(tokenTypeId)
 );
 
-DROP TABLE IF EXISTS employee;
-CREATE TABLE IF NOT EXISTS  employee (
+DROP TABLE IF EXISTS Employee;
+CREATE TABLE IF NOT EXISTS  Employee (
     employeeId int auto_increment NOT NULL,
     name varchar(128) NOT NULL,
     role varchar(128) not null,
      PRIMARY KEY (employeeId)
 );
 
-DROP TABLE IF EXISTS counterServices;
-CREATE TABLE IF NOT EXISTS counterServices (
+DROP TABLE IF EXISTS Counter;
+CREATE TABLE IF NOT EXISTS Counter (
     id int auto_increment NOT NULL,
     counterId int NOT NULL,
-    serviceID int not null,
-    active BOOLEAN DEFAULT FALSE,
+    active BOOLEAN DEFAULT TRUE,
     employeeId int NOT NULL,
     counterType varchar(128) not null,
-    PRIMARY KEY (id, employeeId),
-    FOREIGN KEY (serviceID) REFERENCES ServiceTypes(serviceID),
-    FOREIGN KEY (employeeId) REFERENCES employee(employeeId)
+    CONSTRAINT PK_COUNTER PRIMARY KEY (id, counterId, employeeId, active),
+    FOREIGN KEY (employeeId) REFERENCES Employee(employeeId)
 );
 
-DROP TABLE IF EXISTS counterStatus;
-CREATE TABLE IF NOT EXISTS  counterStatus (
+DROP TABLE IF EXISTS Service;
+CREATE TABLE IF NOT EXISTS Service (
+    serviceId int auto_increment NOT NULL,
+    serviceName VARCHAR (128) not null,
+    PRIMARY KEY (serviceId),
+);
+
+
+DROP TABLE IF EXISTS CounterService;
+CREATE TABLE IF NOT EXISTS CounterService (
+    id int auto_increment NOT NULL,
+    counterId int NOT NULL,
+    serviceId int NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (counterId) REFERENCES Counter(counterId),
+    FOREIGN KEY (serviceId) REFERENCES Service(serviceId)
+);
+
+DROP TABLE IF EXISTS TokenSubTasks;
+CREATE TABLE IF NOT EXISTS TokenSubTasks(
+  id INT auto_increment NOT  NULL,
+  tokenTypeId INT NOT NULL,
+  serviceId int NOT NULL,
+  FOREIGN KEY (serviceId) REFERENCES Service(serviceId),
+  FOREIGN KEY (tokenTypeId) REFERENCES TokenType(tokenTypeId),
+  PRIMARY KEY (id)
+
+);
+
+DROP TABLE IF EXISTS TokenStatus;
+CREATE TABLE IF NOT EXISTS  TokenStatus (
     id int auto_increment NOT NULL,
     tokenId int NOT NULL,
     counterId int NOT NULL,
-    waitTimeInMin int,
     inQ BOOLEAN DEFAULT TRUE,
-    active BOOLEAN DEFAULT TRUE,
     PRIMARY KEY (id),
-    FOREIGN KEY (tokenId) REFERENCES token(tokenId)
+    FOREIGN KEY (tokenId) REFERENCES Token(tokenId),
+    FOREIGN KEY (counterId) REFERENCES Counter(counterId)
 );
-

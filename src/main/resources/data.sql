@@ -1,19 +1,18 @@
 
-insert into employee(name, role) values ('MANAGER1','MANAGER'),('OPERATOR2','OPERATOR'),('MANAGER2','MANAGER'),
-('OPERATOR3','OPERATOR'),('MANAGER4','MANAGER'),('OPERATOR4','OPERATOR'),('ATTENDER1','ATTENDER');
-
-
-
-insert into ServiceTypes (name, avgTimeInMin) values ('WITHDRAW',5), ('DEPOSIT',5), ('CHECK_DEPOSIT',10), ('ACCOUNT_CLOSE',5);
-
-
-insert into counterServices(counterId, serviceID, employeeId, counterType, active) values (1,1,1, 'BOTH','TRUE'), (1,2,2,'PREMIUM','TRUE'),(1,3,3,'REGULAR','TRUE'),(2,4,4,'PREMIUM','TRUE'),(3,1,5,'REGULAR','TRUE');
-
 insert into customer( name ,phoneNumber) values ('ABC', '1234567'),('XYZ', '6868'),('ABsdfdsfC', '07667546'),('link', '09843');
-    
+
+insert into TokenType (name) values ('WITHDRAW'), ('DEPOSIT'), ('CHECK_DEPOSIT'), ('ACCOUNT_CLOSE'),('ACCOUNT_OPEN');
 
 
-insert into  token (customerId , serviceID, inQ) values(1, 1, true), (2, 1,true),(3, 1, true);
+insert into  token (customerId , tokenTypeId) values(1, 1), (2, 1),(3, 1);
 
-insert into counterStatus(tokenId,counterId, waitTimeInMin) values (1,1, 10),(2,2, 10),(3,1, 10);
+
+insert into employee(name, role) values ('OPERATOR','OPERATOR'),('OPERATOR2','OPERATOR'),('MANAGER2','MANAGER'),('OPERATOR3','OPERATOR'),('MANAGER4','MANAGER'),('OPERATOR4','OPERATOR'),('ATTENDER1','ATTENDER');
+
+insert into Counter(counterId, employeeId, counterType) values (1,1, 'REGULAR'), (2,2,'PREMIUM'),(3,3,'REGULAR'),(4,4,'PREMIUM'),(5,1,'REGULAR');
+
+INSERT INTO Service(serviceName) VALUES ('ACC_VERIFICATION'),('BALANCE_ENQUIRY'),('CASH_WITHDRAW'),('CASH_DEPOSIT'),('CHECK_DEPOSIT'),('ACC_CLOSE'),('ACC_OPEN'),('MANAGER_APPROVAL'),('DOC_VERIFICATION');
+
+insert into CounterService(counterId, serviceId) VALUES (1, 1),(1, 2),(1, 3),(2, 1),(2, 4),(3, 1),(3, 5),(5, 1),(5, 2),(5, 6),(5, 7),(5,8),(5,9);
+
 
