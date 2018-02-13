@@ -4,7 +4,7 @@ insert into employee(name, role) values ('MANAGER1','MANAGER'),('OPERATOR2','OPE
 
 
 
-insert into ServiceTypes (name, avgTimeInMin) values ('WITHDRAW',5), ('DEPOSIT',5), ('CHECK_DEPOSIT',10), ('ACCOUNT_CLOSE',5);
+insert into ServiceTypes (name) values ('WITHDRAW'), ('DEPOSIT'), ('CHECK_DEPOSIT'), ('ACCOUNT_CLOSE');
 
 
 insert into counterServices(counterId, serviceID, employeeId, counterType, active) values (1,1,1, 'BOTH','TRUE'), (1,2,2,'PREMIUM','TRUE'),(1,3,3,'REGULAR','TRUE'),(2,4,4,'PREMIUM','TRUE'),(3,1,5,'REGULAR','TRUE');
@@ -15,5 +15,5 @@ insert into customer( name ,phoneNumber) values ('ABC', '1234567'),('XYZ', '6868
 
 insert into  token (customerId , serviceID, inQ) values(1, 1, true), (2, 1,true),(3, 1, true);
 
-insert into counterStatus(tokenId,counterId, waitTimeInMin) values (1,1, 10),(2,2, 10),(3,1, 10);
+insert into counterStatus(tokenId,counterId) values (1,1),(2,2),(3,1;
 
