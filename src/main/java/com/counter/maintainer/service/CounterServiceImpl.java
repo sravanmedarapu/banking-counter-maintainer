@@ -10,9 +10,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.counter.maintainer.service.ProcessTimeConstants.CHECK_DEPOSIT_TIME_SEC;
-import static com.counter.maintainer.service.ProcessTimeConstants.MANAGER_APPROVAL_TIME_IN_SEC;
-import static com.counter.maintainer.service.ProcessTimeConstants.WITHDRAW_TIME_IN_SEC;
+import static com.counter.maintainer.data.contracts.ProcessTimeConstants.CHECK_DEPOSIT_TIME_SEC;
+import static com.counter.maintainer.data.contracts.ProcessTimeConstants.MANAGER_APPROVAL_TIME_IN_SEC;
+import static com.counter.maintainer.data.contracts.ProcessTimeConstants.WITHDRAW_TIME_IN_SEC;
 
 @Service
 public class CounterServiceImpl implements CounterService {

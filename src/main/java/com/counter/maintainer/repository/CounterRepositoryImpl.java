@@ -22,16 +22,6 @@ public class CounterRepositoryImpl implements CounterRepository {
     private JdbcTemplate jdbcTemplate;
 
     @Transactional(readOnly=true)
-    public List<CounterDetails> getCountersStatus() {
-        List<CounterDetails> counterDetailsList = jdbcTemplate.query("select * from Counter where active='true'", new CounterRowMapper());
-        for(CounterDetails counterDetails : counterDetailsList) {
-            counterDetails.setServiceTypes(findCounterServices(counterDetails.getCounterId()));
-            counterDetails.setTokenIdList(findCounterTokens(counterDetails.getCounterId()));
-        }
-        return counterDetailsList;
-    }
-
-    @Transactional(readOnly=true)
     public List<ServiceType> findCounterServices(long counterId) {
         return jdbcTemplate.query("select serviceName from Service where serviceId in "
                                       + "(select serviceID from CounterService where counterId=?)", new Object[]{counterId}, new ServiceTypeRowMapper());
@@ -40,24 +30,6 @@ public class CounterRepositoryImpl implements CounterRepository {
     @Transactional(readOnly=true)
     public List<Long> findCounterTokens(long counterId) {
         return jdbcTemplate.queryForList("select DISTINCT tokenId from TokenStatus where counterId=? and inQ='true'", new Object[]{counterId}, Long.class);
-    }
-
-    @Transactional(readOnly=true)
-    public List<CounterDetails> getAvailableCounters1(TokenType tokenType) {
-        List<CounterDetails> counterDetailsList = new ArrayList<CounterDetails>();
-
-        List<Long> counterIdList = jdbcTemplate.queryForList("select DISTINCT counterId from CounterService where serviceID in "
-                                      + "(select DISTINCT serviceId from serviceTypes where name=?) and active='true'", new Object[]{ tokenType.name()}, Long.class);
-
-        for(Long counterId: counterIdList) {
-            CounterDetails counterDetails = new CounterDetails();
-            counterDetails.setTokenIdList(this.findCounterTokens(counterId));
-            counterDetails.setActive(true);
-            counterDetails.setCounterId(counterId);
-            counterDetailsList.add(counterDetails);
-        }
-
-        return counterDetailsList;
     }
 
     @Transactional(readOnly=true)

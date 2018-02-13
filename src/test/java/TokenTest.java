@@ -4,7 +4,6 @@ import com.counter.maintainer.exceptions.InsufficientPrivilegesException;
 import com.counter.maintainer.repository.CounterRepository;
 import com.counter.maintainer.service.CounterService;
 import com.counter.maintainer.service.TokenService;
-import com.counter.maintainer.service.TokenServiceImpl;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,9 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.List;
-
-import static com.counter.maintainer.service.ProcessTimeConstants.DEPOSIT_TIME_IN_SEC;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 @RunWith(SpringRunner.class)
