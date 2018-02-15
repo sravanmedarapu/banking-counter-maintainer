@@ -1,5 +1,7 @@
 package com.counter.maintainer.controller;
 
+import com.counter.maintainer.exceptions.InvalidCustomerException;
+import com.counter.maintainer.exceptions.TokenException;
 import com.counter.maintainer.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -8,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.counter.maintainer.data.contracts.Customer;
 import com.counter.maintainer.data.contracts.Token;
 import com.counter.maintainer.service.CustomerService;
 
@@ -25,10 +26,12 @@ public class TokenController {
 	/**
 	 * Creates new Token, If the customer not exist then will create new customer before creating token
 	 *
+	 * @throws InvalidCustomerException if provided customerId not valid
+	 * @throws TokenException if token is not created or assigned to counter
 	 */
 	@RequestMapping(method=RequestMethod.POST, value="/api/token/create")
 	public Token createToken(@RequestBody Token token) {
-		return tokenService.createToken(token);
+		return tokenService.createAndAssignToken(token);
 	}
 
 	/**

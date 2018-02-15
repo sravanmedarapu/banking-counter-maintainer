@@ -2,12 +2,14 @@ package com.counter.maintainer.service;
 
 import com.counter.maintainer.data.contracts.Token;
 import com.counter.maintainer.data.contracts.TokenStatus;
+import com.counter.maintainer.exceptions.InvalidTokenException;
+import com.counter.maintainer.exceptions.TokenException;
 
 public interface TokenService {
 
-    Token createToken(Token token);
+    Token createAndAssignToken(Token token) throws TokenException;
 
-    Token getToken(Long tokenId);
+    Token getToken(Long tokenId) throws InvalidTokenException;
 
     void updateTokenStatus(Long tokenId, TokenStatus status);
 

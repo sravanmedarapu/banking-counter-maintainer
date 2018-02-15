@@ -16,7 +16,7 @@ public class CustomerServiceImpl implements  CustomerService{
     @Override
     public Boolean isCustomerExist(Long customerId) {
         if(customerId<=0) {
-            return false;
+            throw new CustomerException("Invalid customerId provided");
         }
         return customerRepository.isCustomerExist(customerId);
     }

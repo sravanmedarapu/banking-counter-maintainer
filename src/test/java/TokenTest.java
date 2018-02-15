@@ -32,7 +32,7 @@ public class TokenTest
     @Test
     public void createTokenForNewAndOldCustomer() throws InterruptedException {
         Token tokenReq = getFakeToken(ServicePriority.PREMIUM, TokenType.WITHDRAW);
-        Token newCustomerToken = tokenService.createToken(tokenReq);
+        Token newCustomerToken = tokenService.createAndAssignToken(tokenReq);
         Assert.assertTrue(newCustomerToken.getCustomerId()>0);
         Assert.assertTrue(newCustomerToken.getTokenId()>0);
         Assert.assertTrue(newCustomerToken.getCounterId()>0);
@@ -45,7 +45,7 @@ public class TokenTest
         tokenReq = getFakeToken(ServicePriority.PREMIUM, TokenType.WITHDRAW);
         long customerId = newCustomerToken.getCustomerId();
         tokenReq.setCustomerId(customerId);
-        Token existingCustomerToken = tokenService.createToken(tokenReq);
+        Token existingCustomerToken = tokenService.createAndAssignToken(tokenReq);
 
         Assert.assertTrue(existingCustomerToken.getCustomerId() == customerId);
         Assert.assertTrue(tokenService.getToken(existingCustomerToken.getTokenId()).getStatus() == TokenStatus.QUEUED);

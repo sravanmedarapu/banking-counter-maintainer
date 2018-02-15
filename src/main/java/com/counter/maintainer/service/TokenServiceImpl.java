@@ -5,6 +5,7 @@ import com.counter.maintainer.data.contracts.ServicePriority;
 import com.counter.maintainer.data.contracts.Token;
 import com.counter.maintainer.data.contracts.TokenStatus;
 import com.counter.maintainer.exceptions.InvalidTokenException;
+import com.counter.maintainer.exceptions.TokenException;
 import com.counter.maintainer.repository.CounterRepository;
 import com.counter.maintainer.repository.CustomerRepository;
 import com.counter.maintainer.repository.TokenRepository;
@@ -27,18 +28,25 @@ public class TokenServiceImpl implements TokenService{
     private CustomerService customerService;
 
     @Transactional
-    public Token createToken(Token token) {
-        if (token.getCustomerId() == null || customerService.isCustomerExist(token.getCustomerId())) {
+    public Token createAndAssignToken(Token token) throws TokenException {
+        if (token.getCustomerId() == null || !customerService.isCustomerExist(token.getCustomerId())) {
             Customer customer = customerService.createCustomer(token.getCustomer());
             token.setCustomer(customer);
             token.setCustomerId(customer.getCustomerId());
         }
-        Token createdToken = tokenRepository.createToken(token);
+        try {
+            Token createdToken = tokenRepository.createToken(token);
 
-        return counterManager.assignTokenToCounter(createdToken);
+            return counterManager.assignTokenToCounter(createdToken);
+        } catch(Exception e) {
+            throw new TokenException("Unable to create or assign Token"+e.getMessage());
+        }
     }
 
     public void updateTokenStatus(Long tokenId, TokenStatus status) {
+        if (tokenId <= 0) {
+            throw new InvalidTokenException("Invalid tokenId:" + tokenId);
+        }
         tokenRepository.updateTokenStatus(tokenId, status);
     }
 

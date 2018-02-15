@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.counter.maintainer.data.contracts.Address;
+import com.counter.maintainer.exceptions.CustomerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -51,8 +52,8 @@ public class CustomerRepositoryImpl implements CustomerRepository{
 
 	public Boolean isCustomerExist(Long customerId) {
 		Long count = jdbcTemplate.queryForObject("select count(*) from customer where customerId=?1", new Object[]{customerId}, Long.class);
-		if(count == 0) {
-			return false;
+		if(count > 0) {
+			return true;
 		} else {
 			return false;
 		}

@@ -9,7 +9,7 @@ insert into  token (customerId , tokenTypeId) values(1, 1), (2, 1),(3, 1);
 
 insert into employee(name, role) values ('OPERATOR','OPERATOR'),('OPERATOR2','OPERATOR'),('MANAGER2','MANAGER'),('OPERATOR3','OPERATOR'),('MANAGER4','MANAGER'),('OPERATOR4','OPERATOR'),('ATTENDER1','ATTENDER');
 
-insert into Counter(counterId, employeeId, counterType) values (1,1, 'REGULAR'), (2,2,'PREMIUM'),(3,3,'REGULAR'),(4,4,'PREMIUM'),(5,1,'REGULAR');
+insert into Counter(counterId, employeeId, counterType) values (1,1, 'BOTH'), (2,2,'PREMIUM'),(3,3,'REGULAR'),(4,4,'PREMIUM'),(5,1,'REGULAR');
 
 INSERT INTO Service(serviceName) VALUES ('ACC_VERIFICATION'),('BALANCE_ENQUIRY'),('CASH_WITHDRAW'),('CASH_DEPOSIT'),('CHECK_DEPOSIT'),('ACC_CLOSE'),('ACC_OPEN'),('MANAGER_APPROVAL'),('DOC_VERIFICATION');
 
