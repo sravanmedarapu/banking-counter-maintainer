@@ -1,7 +1,9 @@
 package com.counter.maintainer.service;
 
 import com.counter.maintainer.data.contracts.*;
+import com.counter.maintainer.exceptions.BranchNotExistsException;
 import com.counter.maintainer.exceptions.InsufficientPrivilegesException;
+import com.counter.maintainer.repository.BranchRepository;
 import com.counter.maintainer.repository.CounterRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,12 +28,15 @@ public class CounterServiceImpl implements CounterService {
     @Autowired
     private EmployeeService employeeService;
 
+    @Autowired
+    private BranchRepository branchRepository;
+
     private static final Logger logger = LoggerFactory.getLogger(CounterServiceImpl.class);
 
 
     @Override
     public Token serveToken(Token token, CounterDesk counterDesk) {
-        while (counterDesk.getServiceTypes().contains((ServiceType)token.peekNextServiceType())) {
+        while (counterDesk.getServiceTypes().contains(token.peekNextServiceType())) {
             Enum serviceType = token.pollNextServiceType();
             if(serviceType == null) {
                 token.setStatus(TokenStatus.COMPLETED);
@@ -74,9 +79,19 @@ public class CounterServiceImpl implements CounterService {
         return tokenService.updateTokenComments(tokenId, comments);
     }
 
+    @Override
     public List<CounterDetails> getCounterStatus() {
         return counterRepository.getAvailableCounters();
     }
+
+    @Override
+    public List<CounterDetails> getCounterStatus(String branchName) {
+        if(!branchRepository.isBranchExists(branchName)) {
+            throw new BranchNotExistsException("No Branch found with name:"+ branchName);
+        }
+        return counterRepository.getAvailableCounters(branchName);
+    }
+
 
     private void processRequest(ServiceType serviceType) {
         switch (serviceType) {

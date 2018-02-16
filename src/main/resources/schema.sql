@@ -18,6 +18,13 @@ CREATE TABLE IF NOT EXISTS Address (
     FOREIGN KEY (customerId) REFERENCES Customer(customerId)
 );
 
+DROP TABLE IF EXISTS Branch;
+CREATE TABLE IF NOT EXISTS Branch (
+    branchId int AUTO_INCREMENT NOT NULL,
+    branchName VARCHAR(128) NOT NULL,
+    PRIMARY KEY (branchId, branchName)
+);
+
 DROP TABLE IF EXISTS TokenType;
 CREATE TABLE IF NOT EXISTS TokenType (
     tokenTypeId int auto_increment NOT NULL,
@@ -33,9 +40,11 @@ CREATE TABLE IF NOT EXISTS  Token (
     comments varchar(512) DEFAULT '',
     status varchar(128),
     tokenPriority varchar(128) not null default 'REGULAR',
+    branchId int NOT NULL ,
     PRIMARY KEY (tokenId),
     FOREIGN KEY (customerId) REFERENCES Customer(customerId),
-    FOREIGN KEY (tokenTypeId) REFERENCES TokenType(tokenTypeId)
+    FOREIGN KEY (tokenTypeId) REFERENCES TokenType(tokenTypeId),
+    FOREIGN KEY (branchId) REFERENCES Branch(branchId)
 );
 
 DROP TABLE IF EXISTS Employee;
@@ -53,8 +62,10 @@ CREATE TABLE IF NOT EXISTS Counter (
     active BOOLEAN DEFAULT TRUE,
     employeeId int NOT NULL,
     counterType varchar(128) not null,
+    branchId int not null,
     CONSTRAINT PK_COUNTER PRIMARY KEY (id, counterId, employeeId, active),
-    FOREIGN KEY (employeeId) REFERENCES Employee(employeeId)
+    FOREIGN KEY (employeeId) REFERENCES Employee(employeeId),
+    FOREIGN KEY(branchId) REFERENCES Branch(branchId)
 );
 
 DROP TABLE IF EXISTS Service;

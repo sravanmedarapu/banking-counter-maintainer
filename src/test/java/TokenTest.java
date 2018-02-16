@@ -78,18 +78,21 @@ public class TokenTest
         token.setCustomer(customer);
         token.setServicePriority(servicePriority);
         token.setTokenType(TokenType.WITHDRAW);
+        token.setBranchName("MIDTOWN");
         return  token;
     }
 
     public static Token getFakeToken(ServicePriority servicePriority, long tokenId) {
         Token token = getFakeToken( servicePriority);
         token.setTokenId(tokenId);
+        token.setBranchName("MIDTOWN");
         return token;
     }
 
     public static Token getFakeToken(ServicePriority servicePriority, TokenType tokenType) {
         Token token = getFakeToken( servicePriority);
         token.setTokenType(tokenType);
+
         return token;
     }
 

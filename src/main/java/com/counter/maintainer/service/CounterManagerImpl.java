@@ -12,6 +12,8 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import static com.counter.maintainer.data.contracts.ServiceType.*;
@@ -33,6 +35,7 @@ public class CounterManagerImpl implements CounterManager {
     @Autowired
     private EmployeeRepository employeeRepository;
 
+    ExecutorService executor;
 
     @EventListener(ApplicationReadyEvent.class)
     public void initCounters() {
@@ -41,11 +44,12 @@ public class CounterManagerImpl implements CounterManager {
         if(counterDetailsList.isEmpty()) {
             throw new RuntimeException("CounterDetails not available exception");
         }
+        executor = Executors.newFixedThreadPool(counterDetailsList.size());
         for(CounterDetails counterDetails: counterDetailsList) {
             List<ServiceType> serviceTypes = getServiceTypeList(counterDetails.getEmployeeId());
             CounterDesk counterDesk = new CounterDesk(counterService, counterDetails, counterDetails.getEmployeeId(), counterDetails.getCounterType(),
                                                       serviceTypes);
-            counterDesk.start();
+            executor.execute(counterDesk);
             counterList.add(counterDesk);
         }
     }

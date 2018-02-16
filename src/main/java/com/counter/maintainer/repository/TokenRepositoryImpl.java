@@ -4,10 +4,7 @@ import com.counter.maintainer.data.contracts.ServicePriority;
 import com.counter.maintainer.data.contracts.TokenType;
 import com.counter.maintainer.data.contracts.Token;
 import com.counter.maintainer.data.contracts.TokenStatus;
-import com.counter.maintainer.exceptions.CustomerException;
-import com.counter.maintainer.exceptions.InvalidTokenException;
-import com.counter.maintainer.exceptions.RepositoryException;
-import com.counter.maintainer.exceptions.TokenNotFoundException;
+import com.counter.maintainer.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -42,7 +39,11 @@ public class TokenRepositoryImpl implements TokenRepository {
      */
     public Token createToken(Token token) throws RepositoryException {
         try {
-            String createQuery = "insert into token set customerId=?1, tokenPriority=?2, tokenTypeId=(select tokenTypeId from TokenType where name=?3)";
+            if(!isBranchExists(token.getBranchName())) {
+                throw new BranchNotExistsException("No branch exist with branchName:"+token.getBranchName());
+            }
+            String createQuery = "insert into token set customerId=?1, tokenPriority=?2, tokenTypeId=(select tokenTypeId from TokenType where name=?3),"
+                                     + " branchId=(select branchId from branch where UPPER(branchName) like UPPER(?4))";
             KeyHolder idHolder = new GeneratedKeyHolder();
             jdbcTemplate.update(new PreparedStatementCreator() {
                 @Override
@@ -54,6 +55,7 @@ public class TokenRepositoryImpl implements TokenRepository {
                     ps.setString(1, String.valueOf(token.getCustomerId()));
                     ps.setString(2, token.getServicePriority().name());
                     ps.setString(3, String.valueOf(token.getTokenType()));
+                    ps.setString(4, token.getBranchName());
 
                     return ps;
                 }
@@ -66,6 +68,18 @@ public class TokenRepositoryImpl implements TokenRepository {
         }
 
     }
+
+    /**
+     * Checks if branch exists with given brnachName
+     *
+     * @param branchName
+     * @return Boolean
+     */
+    public Boolean isBranchExists(String branchName) {
+        Long count = jdbcTemplate.queryForObject("select count(*) from branch where UPPER(branchName) like UPPER(?1)", new Object[] { branchName }, Long.class);
+        return count > 0;
+    }
+
 
     /**
      * Returns the token
@@ -97,11 +111,7 @@ public class TokenRepositoryImpl implements TokenRepository {
      */
     public Boolean isTokenExist(long tokenId) {
         Long count = jdbcTemplate.queryForObject("select count(*) from token where tokenId=?1", new Object[] { tokenId }, Long.class);
-        if (count > 0) {
-            return true;
-        } else {
-            return false;
-        }
+        return count > 0;
     }
 
     /**
@@ -115,12 +125,12 @@ public class TokenRepositoryImpl implements TokenRepository {
         if (!isTokenExist(tokenId)) {
             throw new InvalidTokenException("No token found with tokenID:" + tokenId);
         }
-        jdbcTemplate.update("update TokenStatus set counterId=?2 where tokenId=?1", new Object[] { tokenId, counterId });
+        jdbcTemplate.update("update TokenStatus set counterId=?2 where tokenId=?1", tokenId, counterId);
 
     }
 
     public void addTokenToCounter(Long tokenId, Long counterId) {
-        jdbcTemplate.update("insert into TokenStatus(tokenId, counterId) values(?1,?2)", new Object[] { tokenId, counterId });
+        jdbcTemplate.update("insert into TokenStatus(tokenId, counterId) values(?1,?2)", tokenId, counterId);
     }
 
     /**
@@ -134,7 +144,7 @@ public class TokenRepositoryImpl implements TokenRepository {
         if (!isTokenExist(tokenId)) {
             throw new InvalidTokenException("No token found with tokenID:" + tokenId);
         }
-        jdbcTemplate.update("update token set comments = CONCAT(comments, ' ; ', ?2) where tokenId=?1", new Object[] { tokenId, comment });
+        jdbcTemplate.update("update token set comments = CONCAT(comments, ' ; ', ?2) where tokenId=?1", tokenId, comment);
     }
 
     /**
@@ -148,7 +158,7 @@ public class TokenRepositoryImpl implements TokenRepository {
         if (!isTokenExist(tokenId)) {
             throw new InvalidTokenException("No token found with tokenID:" + tokenId);
         }
-        jdbcTemplate.update("update token set status=?2 where tokenId=?1", new Object[] { tokenId, status.name() });
+        jdbcTemplate.update("update token set status=?2 where tokenId=?1", tokenId, status.name());
     }
 
     /**
@@ -162,7 +172,7 @@ public class TokenRepositoryImpl implements TokenRepository {
         if (!isTokenExist(tokenId)) {
             throw new InvalidTokenException("No token found with tokenID:" + tokenId);
         }
-        jdbcTemplate.update("update TokenStatus set inQ=?3 where tokenId=?1 and counterId=?2", new Object[] { tokenId, counterId, inQ });
+        jdbcTemplate.update("update TokenStatus set inQ=?3 where tokenId=?1 and counterId=?2", tokenId, counterId, inQ);
 
     }
 

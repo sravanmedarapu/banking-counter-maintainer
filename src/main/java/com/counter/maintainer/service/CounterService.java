@@ -16,4 +16,6 @@ public interface CounterService {
     Token updateTokenComments(Long tokenId, String comment);
 
     List<CounterDetails> getCounterStatus();
+
+    List<CounterDetails> getCounterStatus(String branchName);
 }

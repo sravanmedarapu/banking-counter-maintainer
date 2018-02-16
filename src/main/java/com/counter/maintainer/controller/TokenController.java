@@ -24,10 +24,11 @@ public class TokenController {
 
 
 	/**
-	 * Creates new Token, If the customer not exist then will create new customer before creating token
+	 * Creates Token, If the customer not exist then will create new customer before creating token
 	 *
 	 * @throws InvalidCustomerException if provided customerId not valid
 	 * @throws TokenException if token is not created or assigned to counter
+	 * @return Token
 	 */
 	@RequestMapping(method=RequestMethod.POST, value="/api/token/create")
 	public Token createToken(@RequestBody Token token) {
@@ -35,8 +36,10 @@ public class TokenController {
 	}
 
 	/**
-	 * Return Token
+	 * Returns Token for given tokenId
+	 *
 	 * @param tokenId
+	 * @return Token
 	 * throws InvalidTokenException if tokenId is invalid
 	 */
 	@RequestMapping(method=RequestMethod.GET, value="/api/token/{tokenId}")

@@ -16,6 +16,8 @@ public class CounterDetails {
 
 	private CounterType counterType;
 
+	private String branchName;
+
 	public long getCounterId() {
 		return counterId;
 	}
@@ -65,6 +67,14 @@ public class CounterDetails {
 
 	public void setCounterType(CounterType counterType) {
 		this.counterType = counterType;
+	}
+
+	public String getBranchName() {
+		return branchName;
+	}
+
+	public void setBranchName(String branchName) {
+		this.branchName = branchName;
 	}
 }
 

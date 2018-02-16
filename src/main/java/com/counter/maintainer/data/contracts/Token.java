@@ -10,27 +10,33 @@ public class Token implements Comparable<Token> {
 	private Long tokenId;
 	private ServicePriority servicePriority;
 	private Long customerId;
+	private TokenType tokenType;
+	private TokenStatus status;
+	private Long counterId;
+
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private Customer customer;
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+	private String branchName;
 	@JsonIgnore
 	private String comments;
-	private TokenStatus status;
 	@JsonIgnore
 	private DateTime createdDate;
 	@JsonIgnore
 	private Boolean inQ;
 	@JsonIgnore
-	private Long approxTime;
-	private Long counterId;
-
-	@JsonIgnore
 	private DateTime counterAddedTime;
-
-	private TokenType tokenType;
-
 	@JsonIgnore
 	private Queue<Enum> actionItems = null;
-	
+
+	public String getBranchName() {
+		return branchName;
+	}
+
+	public void setBranchName(String branchName) {
+		this.branchName = branchName;
+	}
+
 	public Long getTokenId() {
 		return tokenId;
 	}
@@ -79,12 +85,6 @@ public class Token implements Comparable<Token> {
 	public void setCreatedDate(DateTime createdDate) {
 		this.createdDate = createdDate;
 	}
-	public long getApproxTime() {
-		return approxTime;
-	}
-	public void setApproxTime(long approxTime) {
-		this.approxTime = approxTime;
-	}
 	public long getCounterId() {
 		return counterId;
 	}
@@ -120,32 +120,12 @@ public class Token implements Comparable<Token> {
 				+ ", comments=" + comments + ", actionItems=" + actionItems + ", status=" + status + "]";
 	}
 	
-
-	public static Token getToken() {
-		Token token = new Token();
-		token.setServicePriority(ServicePriority.PREMIUM);
-		token.setCreatedDate(DateTime.now());
-		token.setTokenType(TokenType.DEPOSIT);
-		return token;
-	}
-	
-	public static Token getToken(ServicePriority servicePriority, DateTime dateTime, TokenType reqTokenType) {
-		Token token = new Token();
-		token.setServicePriority(servicePriority);
-		token.setCreatedDate(dateTime);
-		token.setTokenType(reqTokenType);
-		return token;
-	}
 	public int compareTo(Token token) {
 		if (this.counterAddedTime.isBefore(token.counterAddedTime)) {
 			return -1;
 		} else {
 			return 1;
 		}
-	}
-
-	public DateTime getCounterAddedTime() {
-		return counterAddedTime;
 	}
 
 	public void setCounterAddedTime(DateTime counterAddedTime) {

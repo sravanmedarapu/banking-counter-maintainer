@@ -52,11 +52,7 @@ public class CustomerRepositoryImpl implements CustomerRepository{
 
 	public Boolean isCustomerExist(Long customerId) {
 		Long count = jdbcTemplate.queryForObject("select count(*) from customer where customerId=?1", new Object[]{customerId}, Long.class);
-		if(count > 0) {
-			return true;
-		} else {
-			return false;
-		}
+		return count > 0;
 
 	}
 

@@ -14,4 +14,6 @@ public interface CounterRepository {
 
     List<CounterDetails> getAvailableCounters();
 
+    List<CounterDetails> getAvailableCounters(String branchName);
+
 }
