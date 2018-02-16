@@ -4,8 +4,10 @@ import com.counter.maintainer.data.contracts.Customer;
 import com.counter.maintainer.data.contracts.ServicePriority;
 import com.counter.maintainer.data.contracts.Token;
 import com.counter.maintainer.data.contracts.TokenStatus;
+import com.counter.maintainer.exceptions.BranchNotExistsException;
 import com.counter.maintainer.exceptions.InvalidTokenException;
 import com.counter.maintainer.exceptions.TokenException;
+import com.counter.maintainer.repository.BranchRepository;
 import com.counter.maintainer.repository.CounterRepository;
 import com.counter.maintainer.repository.CustomerRepository;
 import com.counter.maintainer.repository.TokenRepository;
@@ -27,6 +29,9 @@ public class TokenServiceImpl implements TokenService{
     @Autowired
     private CustomerService customerService;
 
+    @Autowired
+    private BranchRepository branchRepository;
+
     @Transactional
     public Token createAndAssignToken(Token token) throws TokenException {
         if (token.getCustomerId() == null || !customerService.isCustomerExist(token.getCustomerId())) {
@@ -35,6 +40,9 @@ public class TokenServiceImpl implements TokenService{
             token.setCustomerId(customer.getCustomerId());
         }
         try {
+            if(!branchRepository.isBranchExists(token.getBranchName())) {
+                throw new BranchNotExistsException("No branch exist with branchName:"+token.getBranchName());
+            }
             Token createdToken = tokenRepository.createToken(token);
 
             return counterManager.assignTokenToCounter(createdToken);

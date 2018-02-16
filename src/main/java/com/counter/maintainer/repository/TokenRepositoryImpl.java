@@ -39,9 +39,7 @@ public class TokenRepositoryImpl implements TokenRepository {
      */
     public Token createToken(Token token) throws RepositoryException {
         try {
-            if(!isBranchExists(token.getBranchName())) {
-                throw new BranchNotExistsException("No branch exist with branchName:"+token.getBranchName());
-            }
+
             String createQuery = "insert into token set customerId=?1, tokenPriority=?2, tokenTypeId=(select tokenTypeId from TokenType where name=?3),"
                                      + " branchId=(select branchId from branch where UPPER(branchName) like UPPER(?4))";
             KeyHolder idHolder = new GeneratedKeyHolder();
@@ -67,17 +65,6 @@ public class TokenRepositoryImpl implements TokenRepository {
             throw new RepositoryException("Unable to create Token:" + e.getMessage(), e);
         }
 
-    }
-
-    /**
-     * Checks if branch exists with given brnachName
-     *
-     * @param branchName
-     * @return Boolean
-     */
-    public Boolean isBranchExists(String branchName) {
-        Long count = jdbcTemplate.queryForObject("select count(*) from branch where UPPER(branchName) like UPPER(?1)", new Object[] { branchName }, Long.class);
-        return count > 0;
     }
 
 
