@@ -12,11 +12,15 @@ Create webservice which creates a token for banking system and assign to nearest
 1.Create Token: Creates token and assign to immediate available counter
 ````
 POST: http://localhost:8080/api/token/create
-Request Body: 
+````
+Ex:
 
+Request Body: 
+````
           {
             "servicePriority":"REGULAR",
             "tokenType":"WITHDRAW",
+            "branchName":"midtown",
             "customer":{
                         "name":"abc",
                         "phoneNumber":"123",
@@ -29,6 +33,17 @@ Request Body:
                         }
             }
           }
+````      
+Response: 
+````
+           {
+               "tokenId": 4,
+               "servicePriority": "REGULAR",
+               "customerId": 5,
+               "tokenType": "WITHDRAW",
+               "status": "QUEUED",
+               "counterId": 1
+           }
 
 ````
 
@@ -38,10 +53,20 @@ Request Body:
 GET: http://localhost:8080/api/token/{tokenId}
 ````
 
-3. Get Counters Status: get the all available counter with tokens in queue
+3. Get Counters Status Across branches: get the all available counter with tokens in queue
 
 ````
 GET: http://localhost:8080/api/counter/status
+````
+
+4. Get Counters status for specific branch
+````
+GET: http://localhost:8080/api/branch/{brnachName}/counter/status
+````
+Ex:
+````
+http://localhost:8080/api/branch/rural/counter/status
+
 ````
 
 # Token Assign Design:
