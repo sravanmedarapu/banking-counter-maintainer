@@ -18,9 +18,6 @@ import static org.junit.Assert.assertTrue;
 public class TokenTest
 {
     @Autowired
-    private CounterRepository counterRepository;
-
-    @Autowired
     private TokenService tokenService;
 
     @Autowired

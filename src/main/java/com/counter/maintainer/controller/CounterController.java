@@ -33,7 +33,7 @@ public class CounterController {
 
 	/**
 	 *
-	 * returns available counters details along with current counter queue ticketId list
+	 * returns available counters details along with current counter queue ticketId list for given branch
 	 *
 	 * @return
 	 */

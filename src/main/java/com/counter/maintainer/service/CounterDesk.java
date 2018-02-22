@@ -3,8 +3,12 @@ package com.counter.maintainer.service;
 import com.counter.maintainer.data.contracts.*;
 import com.counter.maintainer.exceptions.EmptyCounterQueueException;
 import com.counter.maintainer.exceptions.InvalidTokenException;
+import com.counter.maintainer.obsever.pattern.CounterUpdated;
+import com.counter.maintainer.obsever.pattern.CounterUpdatedListener;
 
 import java.util.List;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class CounterDesk extends Thread{
 
@@ -14,14 +18,18 @@ public class CounterDesk extends Thread{
     private CounterDetails counterDetails;
     private CounterType counterType;
     private List<ServiceType> serviceTypes;
+    private boolean isProcessing = false;
+    private CounterUpdatedListener counterUpdated;
+    ReadWriteLock lock = new ReentrantReadWriteLock();
 
-    public CounterDesk(CounterService counterService, CounterDetails counterDetails, Long empId, CounterType counterType, List<ServiceType> serviceTypes) {
+    public CounterDesk(CounterService counterService, CounterDetails counterDetails, Long empId, CounterType counterType, List<ServiceType> serviceTypes, CounterUpdatedListener counterUpdated) {
         this.counterService = counterService;
         this.counterDetails = counterDetails;
         this.empId = empId;
         this.counterType = counterType;
         this.counterQueue = new CounterQueue(counterType);
         this.serviceTypes = serviceTypes;
+        this.counterUpdated=counterUpdated;
     }
 
     public CounterDetails getCounterDetails() {
@@ -74,6 +82,14 @@ public class CounterDesk extends Thread{
         return servedToken;
     }
 
+    public boolean isProcessing() {
+        return isProcessing;
+    }
+
+    public void setProcessing(boolean processing) {
+        isProcessing = processing;
+    }
+
     @Override
     public void run() {
         while (true) {
@@ -84,6 +100,19 @@ public class CounterDesk extends Thread{
                 //ignore
             }
         }
+    }
+
+    public void processQueue() {
+        lock.readLock().lock();
+        while (counterQueue.getQueueLength() >0) {
+            try {
+                Token token = counterQueue.fetchToken();
+                serveToken(token);
+            } catch (EmptyCounterQueueException e) {
+                break;
+            }
+        }
+        lock.readLock().unlock();
     }
 
 

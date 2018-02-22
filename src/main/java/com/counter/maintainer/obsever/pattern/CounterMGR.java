@@ -1,30 +1,38 @@
-package com.counter.maintainer.service;
+package com.counter.maintainer.obsever.pattern;
 
 import com.counter.maintainer.data.contracts.*;
 import com.counter.maintainer.exceptions.CountersNotAvailableException;
-import com.counter.maintainer.obsever.pattern.CounterMGR;
-import com.counter.maintainer.obsever.pattern.CounterUpdated;
-import com.counter.maintainer.obsever.pattern.CounterUpdatedListener;
 import com.counter.maintainer.repository.CounterRepository;
 import com.counter.maintainer.repository.EmployeeRepository;
+import com.counter.maintainer.service.CounterDesk;
+import com.counter.maintainer.service.CounterService;
+import com.counter.maintainer.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static com.counter.maintainer.data.contracts.ServiceType.*;
+import static com.counter.maintainer.data.contracts.ServiceType.CHECK_DEPOSIT;
+import static com.counter.maintainer.data.contracts.ServiceType.DOC_VERIFICATION;
 
-@Component
-public class CounterManagerImpl implements CounterManager {
-
+@Service
+public class CounterMGR {
     private List<CounterDesk> counterList = new ArrayList<>();
+    private CounterUpdatedListener listener = new CounterUpdated();
+
+
 
     @Autowired
     protected CounterService counterService;
@@ -38,12 +46,9 @@ public class CounterManagerImpl implements CounterManager {
     @Autowired
     private EmployeeRepository employeeRepository;
 
-    @Autowired
-    private CounterMGR counterMGR;
-
     ExecutorService executor;
 
-   // @EventListener(ApplicationReadyEvent.class)
+    @EventListener(ApplicationReadyEvent.class)
     public void initCounters() {
         List<CounterDetails> counterDetailsList = counterRepository.getAvailableCounters();
 
@@ -53,26 +58,42 @@ public class CounterManagerImpl implements CounterManager {
         executor = Executors.newFixedThreadPool(counterDetailsList.size());
         for(CounterDetails counterDetails: counterDetailsList) {
             List<ServiceType> serviceTypes = getServiceTypeList(counterDetails.getEmployeeId());
-            CounterUpdatedListener counterListener = new CounterUpdated();
+            CounterUpdated counterUpdated = new CounterUpdated();
             CounterDesk counterDesk = new CounterDesk(counterService, counterDetails, counterDetails.getEmployeeId(), counterDetails.getCounterType(),
-                                                      serviceTypes, counterListener);
-            //executor.execute(counterDesk);
+                                                      serviceTypes, counterUpdated);
+           // executor.execute(counterDesk);
             counterList.add(counterDesk);
         }
     }
 
-    @Override
-    public Token assignTokenToCounter(Token token) {
-         counterMGR.addToken(token);
-         return tokenService.getToken(token.getTokenId());
+
+    public CompletableFuture addToken(Token token) {
+        CounterDesk counterDesk = assignToken(token);
+
+        CompletableFuture cf = new CompletableFuture<>();
+
+        // Run a task specified by a Supplier object asynchronously
+        cf = CompletableFuture.supplyAsync(new Supplier<String>() {
+            @Override
+            public String get() {
+                    listener.onTokenAdded(counterDesk);
+                return "";
+            }
+        });
+
+        return cf;
     }
 
-    @Override
-    public List<CounterDetails> getCounterStatus() {
-        return counterService.getCounterStatus();
+
+    @Async
+    public void notifyCounterUpdatedListeners(CounterDesk counterDesk) {
+        // Notify each of the listeners in the list of registered listeners
+
+      //  CompletableFuture.runAsync(listener.onTokenAdded(counterDesk))
+        this.listener.onTokenAdded(counterDesk);
     }
 
-    private Token assignToken(Token token) {
+    public CounterDesk assignToken(Token token) {
         List<CounterDesk> counterDesks = getAvailableCounterDesks(token);
         if(counterDesks.isEmpty()) {
             throw new CountersNotAvailableException();
@@ -92,8 +113,8 @@ public class CounterManagerImpl implements CounterManager {
         }
 
         addTokenToCounterQueue(minCounterDesk, token);
-        tokenService.updateTokenStatus(token.getTokenId(), TokenStatus.QUEUED);
-        return token;
+        //tokenService.updateTokenStatus(token.getTokenId(), TokenStatus.QUEUED);
+        return minCounterDesk;
 
     }
 
@@ -104,23 +125,26 @@ public class CounterManagerImpl implements CounterManager {
         token.setStatus(TokenStatus.QUEUED);
     }
 
+
     private List<CounterDesk> getAvailableCounterDesks( Token token) {
         if(token.getServicePriority() == ServicePriority.PREMIUM) {
             return counterList.stream().filter(counterDesk ->
-                          counterDesk.getCounterType() == CounterType.BOTH
-                              || counterDesk.getCounterType() == CounterType.PREMIUM
+                                                   counterDesk.getCounterType() == CounterType.BOTH
+                                                       || counterDesk.getCounterType() == CounterType.PREMIUM
             ).filter(counterDesk -> {
-                         return counterDesk.getServiceTypes().contains(token.peekNextServiceType());
-                     }).collect(Collectors.toList());
+                return counterDesk.getServiceTypes().contains(token.peekNextServiceType());
+            }).collect(Collectors.toList());
         } else {
             return counterList.stream().filter(counterDesk ->
-                          counterDesk.getCounterType() == CounterType.BOTH
-                              || counterDesk.getCounterType() == CounterType.REGULAR
+                                                   counterDesk.getCounterType() == CounterType.BOTH
+                                                       || counterDesk.getCounterType() == CounterType.REGULAR
             ).filter(counterDesk -> {
                 return counterDesk.getServiceTypes().contains(token.peekNextServiceType());
             }).collect(Collectors.toList());
         }
     }
+
+
 
     public List<ServiceType> getServiceTypeList(Long employeeId) {
         EmployeeRole role = employeeRepository.getEmployeeRole(employeeId);

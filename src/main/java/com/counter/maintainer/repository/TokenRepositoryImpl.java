@@ -171,7 +171,9 @@ class TokenRowMapper implements RowMapper<Token> {
         Token token = new Token();
         token.setTokenId(rs.getLong("tokenId"));
         token.setCustomerId(rs.getLong("customerId"));
-        token.setStatus(TokenStatus.valueOf(rs.getString("status")));
+        if(rs.getString("status")!=null) {
+            token.setStatus(TokenStatus.valueOf(rs.getString("status")));
+        }
         token.setComments(rs.getString("comments"));
         token.setTokenType(TokenType.valueOf(rs.getString("name")));
         token.setServicePriority(ServicePriority.valueOf(rs.getString("tokenPriority")));

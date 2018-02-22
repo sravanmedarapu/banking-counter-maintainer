@@ -34,7 +34,7 @@ public class CounterDetailsQueueTest {
 
     @Test
     public void counterQueueOrderTest() throws EmptyCounterQueueException {
-        CounterQueue bothQeue = new CounterQueue(CounterType.BOTH);
+        CounterQueue bothQueue = new CounterQueue(CounterType.BOTH);
 
         Token regular1 = TokenTest.getFakeToken(ServicePriority.REGULAR, 10);
         Token regular2 = TokenTest.getFakeToken(ServicePriority.REGULAR, 20);
@@ -45,24 +45,24 @@ public class CounterDetailsQueueTest {
         Token premium3 = TokenTest.getFakeToken(ServicePriority.PREMIUM, 60);
 
 
-        bothQeue.addTokenToQueue(regular1);
-        bothQeue.addTokenToQueue(regular2);
-        bothQeue.addTokenToQueue(regular3);
+        bothQueue.addTokenToQueue(regular1);
+        bothQueue.addTokenToQueue(regular2);
+        bothQueue.addTokenToQueue(regular3);
 
 
-        bothQeue.addTokenToQueue(premium1);
-        bothQeue.addTokenToQueue(premium2);
-        bothQeue.addTokenToQueue(premium3);
+        bothQueue.addTokenToQueue(premium1);
+        bothQueue.addTokenToQueue(premium2);
+        bothQueue.addTokenToQueue(premium3);
 
-        Assert.assertTrue(bothQeue.fetchToken().getTokenId() == premium1.getTokenId());
-        bothQeue.addToRecentServedList(premium1);
-        Assert.assertTrue(bothQeue.fetchToken().getTokenId() ==  premium2.getTokenId());
-        bothQeue.addToRecentServedList(premium2);
-        Assert.assertTrue(bothQeue.fetchToken().getTokenId() == regular1.getTokenId());
-        bothQeue.addToRecentServedList(regular1);
-        Assert.assertTrue(bothQeue.fetchToken().getTokenId() == premium3.getTokenId());
-        bothQeue.addToRecentServedList(premium3);
-        Assert.assertTrue(bothQeue.fetchToken().getTokenId() == regular2.getTokenId());
+        Assert.assertTrue(bothQueue.fetchToken().getTokenId() == premium1.getTokenId());
+        bothQueue.addToRecentServedList(premium1);
+        Assert.assertTrue(bothQueue.fetchToken().getTokenId() ==  premium2.getTokenId());
+        bothQueue.addToRecentServedList(premium2);
+        Assert.assertTrue(bothQueue.fetchToken().getTokenId() == regular1.getTokenId());
+        bothQueue.addToRecentServedList(regular1);
+        Assert.assertTrue(bothQueue.fetchToken().getTokenId() == premium3.getTokenId());
+        bothQueue.addToRecentServedList(premium3);
+        Assert.assertTrue(bothQueue.fetchToken().getTokenId() == regular2.getTokenId());
     }
 
 }
